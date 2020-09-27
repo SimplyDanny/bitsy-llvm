@@ -1,4 +1,6 @@
-AllowShortFunctionsOnASingleLine: None
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes
 ColumnLimit: 120
 IndentWidth: 4
 PointerAlignment: Left
