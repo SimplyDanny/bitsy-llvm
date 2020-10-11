@@ -9,28 +9,25 @@ struct Expression {
     virtual void print() const = 0;
 };
 
-class NumberExpression : public Expression {
+struct NumberExpression : public Expression {
     int value;
 
-  public:
     NumberExpression(int value) : value(value){};
     void print() const;
 };
 
-class VariableExpression : public Expression {
+struct VariableExpression : public Expression {
     std::string name;
 
-  public:
     VariableExpression(const std::string& name) : name(name) {}
     void print() const;
 };
 
-class BinaryOperationExpression : public Expression {
+struct BinaryOperationExpression : public Expression {
     char operator_symbol;
     std::unique_ptr<Expression> left_expression;
     std::unique_ptr<Expression> right_expression;
 
-  public:
     BinaryOperationExpression(char operator_symbol, std::unique_ptr<Expression> left_expression,
                               std::unique_ptr<Expression> right_expression)
         : operator_symbol(operator_symbol), left_expression(std::move(left_expression)),
