@@ -1,12 +1,11 @@
 #include <fstream>
-#include <iostream>
 
+#include "codegen/CodeGenerator.hpp"
 #include "lexer/Lexer.hpp"
-#include "lexer/TokenType.hpp"
 #include "parser/Parser.hpp"
 
-int main() {
-    std::ifstream file_stream{"example.bitsy"};
+int main(int argc, char* argv[]) {
+    std::ifstream file_stream{argv[1]};
     if (file_stream.eof()) {
         return 0;
     }
@@ -23,6 +22,9 @@ int main() {
     auto main_block = parser.parse();
 
     main_block->print();
+
+    CodeGenerator generator{std::move(main_block)};
+    generator.generate();
 
     return 0;
 }

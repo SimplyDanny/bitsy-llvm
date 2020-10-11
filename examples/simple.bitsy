@@ -1,0 +1,25 @@
+BEGIN
+    READ z
+    x = 7
+    PRINT 3 / z
+    IFP z
+        PRINT 2
+    ELSE
+        PRINT y
+        PRINT z
+    END
+    PRINT x
+    LOOP
+        x = x + 2
+        PRINT x
+        IFP x - 12
+            IFZ z - 1
+                BREAK
+            END
+            PRINT x * 2
+            BREAK
+        END
+        x = x - 1
+    END
+    PRINT x
+END
