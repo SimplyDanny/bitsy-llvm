@@ -11,8 +11,10 @@ include_directories(include)
 
 add_executable(bitsyc
     src/bitsyc.cpp
+    src/ast/ConsolePrinter.cpp
     src/ast/Expression.cpp
     src/ast/Statement.cpp
     src/lexer/Lexer.cpp
     src/lexer/Token.cpp
+    src/parser/Parser.cpp
 )
