@@ -9,8 +9,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(include)
 
-add_executable(bitsyc 
+add_executable(bitsyc
     src/bitsyc.cpp
+    src/ast/Expression.cpp
+    src/ast/Statement.cpp
     src/lexer/Lexer.cpp
     src/lexer/Token.cpp
 )
