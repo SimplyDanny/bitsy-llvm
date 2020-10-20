@@ -3,6 +3,7 @@
 
 #include "lexer/Lexer.hpp"
 #include "lexer/TokenType.hpp"
+#include "parser/Parser.hpp"
 
 int main() {
     std::ifstream file_stream{"example.bitsy"};
@@ -17,6 +18,11 @@ int main() {
     }
 
     file_stream.close();
+
+    Parser parser{tokens};
+    auto main_block = parser.parse();
+
+    main_block->print();
 
     return 0;
 }
