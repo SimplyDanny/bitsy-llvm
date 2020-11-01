@@ -6,21 +6,18 @@
 
 struct Expression {
     virtual ~Expression() = default;
-    virtual void print() const = 0;
 };
 
 struct NumberExpression : public Expression {
     int value;
 
     NumberExpression(int value) : value(value){};
-    void print() const;
 };
 
 struct VariableExpression : public Expression {
     std::string name;
 
     VariableExpression(const std::string& name) : name(name) {}
-    void print() const;
 };
 
 struct BinaryOperationExpression : public Expression {
@@ -32,7 +29,6 @@ struct BinaryOperationExpression : public Expression {
                               std::unique_ptr<Expression> right_expression)
         : operator_symbol(operator_symbol), left_expression(std::move(left_expression)),
           right_expression(std::move(right_expression)) {}
-    void print() const;
 };
 
 #endif

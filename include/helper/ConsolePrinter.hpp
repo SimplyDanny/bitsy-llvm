@@ -3,8 +3,6 @@
 
 #include <functional>
 #include <iostream>
-#include <memory>
-#include <type_traits>
 
 typedef std::function<void(void)> NestedPrinter;
 
