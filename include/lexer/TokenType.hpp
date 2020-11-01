@@ -1,8 +1,6 @@
 #ifndef TOKENTYPE_HPP
 #define TOKENTYPE_HPP
 
-#include <string>
-
 enum TokenType {
     // Blocks
     t_begin,

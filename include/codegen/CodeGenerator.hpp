@@ -6,8 +6,6 @@
 #include "llvm/IR/Module.h"
 
 #include "ast/ASTVisitor.hpp"
-#include "ast/Expression.hpp"
-#include "ast/Statement.hpp"
 
 class CodeGenerator : public ASTVisitor<llvm::Value*> {
     llvm::LLVMContext context;

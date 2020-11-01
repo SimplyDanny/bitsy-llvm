@@ -2,8 +2,6 @@
 #define ASTPRINTER_HPP
 
 #include "ast/ASTVisitor.hpp"
-#include "ast/Expression.hpp"
-#include "ast/Statement.hpp"
 
 class ASTPrinter : public ASTVisitor<void> {
 
