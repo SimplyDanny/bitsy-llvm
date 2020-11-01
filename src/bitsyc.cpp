@@ -1,7 +1,6 @@
 #include <fstream>
 
 #include "ast/ASTPrinter.hpp"
-#include "ast/Statement.hpp"
 #include "codegen/CodeGenerator.hpp"
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"

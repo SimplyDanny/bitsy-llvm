@@ -4,8 +4,6 @@
 #include <vector>
 
 #include "lexer/Lexer.hpp"
-#include "lexer/Token.hpp"
-#include "lexer/TokenType.hpp"
 
 static TokenMatcher is_operator = [](auto c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';

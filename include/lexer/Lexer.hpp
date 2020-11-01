@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "lexer/Token.hpp"
-#include "lexer/TokenType.hpp"
 
 typedef std::function<int(unsigned char)> TokenMatcher;
 

@@ -1,14 +1,3 @@
-#include <algorithm>
-#include <exception>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <vector>
-
-#include "ast/Expression.hpp"
-#include "ast/Statement.hpp"
-#include "lexer/Token.hpp"
-#include "lexer/TokenType.hpp"
 #include "parser/Parser.hpp"
 
 static auto log_expression_error(const char* string) {

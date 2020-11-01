@@ -5,8 +5,6 @@
 #include "llvm/Support/Host.h"
 #include "llvm/Support/raw_ostream.h"
 
-#include "ast/Expression.hpp"
-#include "ast/Statement.hpp"
 #include "codegen/CodeGenerator.hpp"
 
 static std::stack<llvm::BasicBlock*> loop_continuation_hierarchy;
