@@ -5,37 +5,35 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 
+#include "ast/ASTVisitor.hpp"
 #include "ast/Expression.hpp"
 #include "ast/Statement.hpp"
 
-class CodeGenerator {
-    std::unique_ptr<Program> program;
-
+class CodeGenerator : public ASTVisitor<llvm::Value*> {
     llvm::LLVMContext context;
     llvm::IRBuilder<> builder;
     std::unique_ptr<llvm::Module> module;
     std::map<std::string, llvm::Value*> known_variables;
 
   public:
-    CodeGenerator(std::unique_ptr<Program> program)
-        : program(std::move(program)), builder(context),
-          module(std::make_unique<llvm::Module>("Bitsy Program", context)){};
-    void generate();
+    CodeGenerator() : builder(context), module(std::make_unique<llvm::Module>("Bitsy Program", context)){};
+
+  public:
+    using ASTVisitor<llvm::Value*>::visit;
 
   private:
-    void generate(const Statement* block);
-    void generate(const Block* block);
-    void generate(const IfStatement* if_statement);
-    void generate(const LoopStatement* loop_statement);
-    void generate(const PrintStatement* print_statement);
-    void generate(const ReadStatement* read_statement);
-    void generate(const AssignmentStatement* assignment_statement);
-    void generate(const BreakStatement* break_statement);
+    void visit(const Program* program);
+    void visit(const Block* block);
+    void visit(const IfStatement* if_statement);
+    void visit(const LoopStatement* loop_statement);
+    void visit(const PrintStatement* print_statement);
+    void visit(const ReadStatement* read_statement);
+    void visit(const AssignmentStatement* assignment_statement);
+    void visit(const BreakStatement* break_statement);
 
-    llvm::Value* generate(const Expression* expression);
-    llvm::Value* generate(const NumberExpression* number_expression);
-    llvm::Value* generate(const VariableExpression* variable_expression);
-    llvm::Value* generate(const BinaryOperationExpression* binary_operation_expression);
+    llvm::Value* visit(const NumberExpression* number_expression);
+    llvm::Value* visit(const VariableExpression* variable_expression);
+    llvm::Value* visit(const BinaryOperationExpression* binary_operation_expression);
 };
 
 #endif

@@ -18,7 +18,7 @@ static llvm::Value* print_template;
 static llvm::Function* main_function;
 static llvm::BasicBlock* main_block;
 
-void CodeGenerator::generate() {
+void CodeGenerator::visit(const Program* program) {
     read_template = builder.CreateGlobalStringPtr("%i", "read_template", 0, module.get());
     print_template = builder.CreateGlobalStringPtr("%i\n", "print_template", 0, module.get());
 
@@ -27,7 +27,7 @@ void CodeGenerator::generate() {
 
     main_block = llvm::BasicBlock::Create(context, "main_block", main_function);
     builder.SetInsertPoint(main_block);
-    generate(program->block.get());
+    visit(program->block.get());
     builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
 
     module->setTargetTriple(llvm::sys::getDefaultTargetTriple());
@@ -39,37 +39,17 @@ void CodeGenerator::generate() {
     }
 }
 
-void CodeGenerator::generate(const Block* block) {
+void CodeGenerator::visit(const Block* block) {
     for (const auto& statement : block->statements) {
         if (had_break) {
             return;
         }
-        generate(statement.get());
+        visit(statement.get());
     }
 }
 
-void CodeGenerator::generate(const Statement* statement) {
-    if (auto block = dynamic_cast<const Block*>(statement)) {
-        generate(block);
-    } else if (auto if_statement = dynamic_cast<const IfStatement*>(statement)) {
-        generate(if_statement);
-    } else if (auto loop_statement = dynamic_cast<const LoopStatement*>(statement)) {
-        generate(loop_statement);
-    } else if (auto print_statement = dynamic_cast<const PrintStatement*>(statement)) {
-        generate(print_statement);
-    } else if (auto read_statement = dynamic_cast<const ReadStatement*>(statement)) {
-        generate(read_statement);
-    } else if (auto assignment_statement = dynamic_cast<const AssignmentStatement*>(statement)) {
-        generate(assignment_statement);
-    } else if (auto break_statement = dynamic_cast<const BreakStatement*>(statement)) {
-        generate(break_statement);
-    } else {
-        llvm_unreachable("Unknown 'Statement' type.");
-    }
-}
-
-void CodeGenerator::generate(const IfStatement* if_statement) {
-    auto expression = generate(if_statement->expression.get());
+void CodeGenerator::visit(const IfStatement* if_statement) {
+    auto expression = visit(if_statement->expression.get());
     auto null = llvm::ConstantInt::get(builder.getInt32Ty(), 0);
     llvm::Value* condition;
     switch (if_statement->type) {
@@ -95,7 +75,7 @@ void CodeGenerator::generate(const IfStatement* if_statement) {
     }
 
     builder.SetInsertPoint(then_block);
-    generate(if_statement->then_block.get());
+    visit(if_statement->then_block.get());
     if (!had_break) {
         builder.CreateBr(continuation_block);
     }
@@ -103,7 +83,7 @@ void CodeGenerator::generate(const IfStatement* if_statement) {
 
     if (if_statement->else_block) {
         builder.SetInsertPoint(else_block);
-        generate(if_statement->else_block.get());
+        visit(if_statement->else_block.get());
         if (!had_break) {
             builder.CreateBr(continuation_block);
         }
@@ -113,14 +93,14 @@ void CodeGenerator::generate(const IfStatement* if_statement) {
     builder.SetInsertPoint(continuation_block);
 }
 
-void CodeGenerator::generate(const LoopStatement* loop_statement) {
+void CodeGenerator::visit(const LoopStatement* loop_statement) {
     auto loop_block = llvm::BasicBlock::Create(context, "loop_block", main_function);
     auto after_loop_block = llvm::BasicBlock::Create(context, "after_loop_block", main_function);
     loop_continuation_hierarchy.push(after_loop_block);
     builder.CreateBr(loop_block);
 
     builder.SetInsertPoint(loop_block);
-    generate(loop_statement->block.get());
+    visit(loop_statement->block.get());
     builder.CreateBr(loop_block);
 
     loop_continuation_hierarchy.pop();
@@ -129,14 +109,14 @@ void CodeGenerator::generate(const LoopStatement* loop_statement) {
     builder.SetInsertPoint(after_loop_block);
 }
 
-void CodeGenerator::generate(const PrintStatement* print_statement) {
+void CodeGenerator::visit(const PrintStatement* print_statement) {
     auto print_function = module->getOrInsertFunction(
         "printf", llvm::FunctionType::get(builder.getInt32Ty(), builder.getInt8PtrTy(), true));
-    std::vector<llvm::Value*> arguments{print_template, generate(print_statement->expression.get())};
+    std::vector<llvm::Value*> arguments{print_template, visit(print_statement->expression.get())};
     builder.CreateCall(print_function, arguments, "print");
 }
 
-void CodeGenerator::generate(const ReadStatement* read_statement) {
+void CodeGenerator::visit(const ReadStatement* read_statement) {
     auto read_function = module->getOrInsertFunction(
         "scanf", llvm::FunctionType::get(builder.getInt32Ty(), builder.getInt8PtrTy(), true));
     auto allocated_variable = builder.CreateAlloca(builder.getInt32Ty());
@@ -145,8 +125,8 @@ void CodeGenerator::generate(const ReadStatement* read_statement) {
     builder.CreateCall(read_function, arguments, "read");
 }
 
-void CodeGenerator::generate(const AssignmentStatement* assignment_statement) {
-    auto value = generate(assignment_statement->expression.get());
+void CodeGenerator::visit(const AssignmentStatement* assignment_statement) {
+    auto value = visit(assignment_statement->expression.get());
     auto variable_name = assignment_statement->variable->name;
     if (auto known_variable = known_variables[variable_name]) {
         builder.CreateStore(value, known_variable);
@@ -157,27 +137,16 @@ void CodeGenerator::generate(const AssignmentStatement* assignment_statement) {
     builder.CreateStore(value, allocated_variable);
 }
 
-void CodeGenerator::generate(const BreakStatement* break_statement) {
+void CodeGenerator::visit(const BreakStatement* break_statement) {
     builder.CreateBr(loop_continuation_hierarchy.top());
     had_break = true;
 }
 
-llvm::Value* CodeGenerator::generate(const Expression* expression) {
-    if (const auto* number_expression = dynamic_cast<const NumberExpression*>(expression)) {
-        return generate(number_expression);
-    } else if (const auto* variable_expression = dynamic_cast<const VariableExpression*>(expression)) {
-        return generate(variable_expression);
-    } else if (const auto* binary_operation_expression = dynamic_cast<const BinaryOperationExpression*>(expression)) {
-        return generate(binary_operation_expression);
-    }
-    llvm_unreachable("Unknown 'Expression' type.");
-}
-
-llvm::Value* CodeGenerator::generate(const NumberExpression* number_expression) {
+llvm::Value* CodeGenerator::visit(const NumberExpression* number_expression) {
     return llvm::ConstantInt::get(builder.getInt32Ty(), number_expression->value);
 }
 
-llvm::Value* CodeGenerator::generate(const VariableExpression* variable_expression) {
+llvm::Value* CodeGenerator::visit(const VariableExpression* variable_expression) {
     if (auto known_variable = known_variables[variable_expression->name]) {
         return builder.CreateLoad(known_variable);
     }
@@ -195,9 +164,9 @@ llvm::Value* CodeGenerator::generate(const VariableExpression* variable_expressi
     return builder.CreateLoad(new_variable);
 }
 
-llvm::Value* CodeGenerator::generate(const BinaryOperationExpression* binary_operation_expression) {
-    auto lhs = generate(binary_operation_expression->left_expression.get());
-    auto rhs = generate(binary_operation_expression->right_expression.get());
+llvm::Value* CodeGenerator::visit(const BinaryOperationExpression* binary_operation_expression) {
+    auto lhs = visit(binary_operation_expression->left_expression.get());
+    auto rhs = visit(binary_operation_expression->right_expression.get());
     switch (binary_operation_expression->operator_symbol) {
     case '+':
         return builder.CreateAdd(lhs, rhs);
