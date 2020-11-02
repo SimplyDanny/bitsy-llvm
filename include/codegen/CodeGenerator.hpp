@@ -6,6 +6,9 @@
 #include "llvm/IR/Module.h"
 
 #include "ast/ASTVisitor.hpp"
+#include "helper/PostProcessor.hpp"
+
+typedef std::function<void(const llvm::Module*)> ModuleProcessor;
 
 class CodeGenerator : public ASTVisitor<llvm::Value*> {
     llvm::LLVMContext context;
@@ -13,8 +16,12 @@ class CodeGenerator : public ASTVisitor<llvm::Value*> {
     std::unique_ptr<llvm::Module> module;
     std::map<std::string, llvm::Value*> known_variables;
 
+    ModuleProcessor module_processor;
+
   public:
-    CodeGenerator() : builder(context), module(std::make_unique<llvm::Module>("Bitsy Program", context)){};
+    explicit CodeGenerator(const ModuleProcessor& module_processor)
+        : builder(context), module(std::make_unique<llvm::Module>("Bitsy Program", context)),
+          module_processor(module_processor){};
 
   public:
     using ASTVisitor<llvm::Value*>::visit;

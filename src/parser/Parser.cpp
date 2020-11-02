@@ -1,12 +1,14 @@
+#include <iostream>
+
 #include "parser/Parser.hpp"
 
 static auto log_expression_error(const char* string) {
-    fprintf(stderr, "Error parsing expression: %s\n", string);
+    std::cerr << "Error parsing expression: " << string << std::endl;
     return nullptr;
 }
 
 static auto log_statement_error(const char* string) {
-    fprintf(stderr, "Error parsing statement: %s\n", string);
+    std::cerr << "Error parsing statement: " << string << std::endl;
     return nullptr;
 }
 
