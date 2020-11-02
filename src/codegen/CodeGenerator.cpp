@@ -30,11 +30,7 @@ void CodeGenerator::visit(const Program* program) {
 
     module->setTargetTriple(llvm::sys::getDefaultTargetTriple());
 
-    {
-        std::error_code error_code{};
-        llvm::raw_fd_ostream file_stream{"tmp.ll", error_code};
-        module->print(file_stream, nullptr);
-    }
+    module_processor(module.get());
 }
 
 void CodeGenerator::visit(const Block* block) {

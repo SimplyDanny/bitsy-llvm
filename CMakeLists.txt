@@ -12,7 +12,9 @@ find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
-include_directories(include ${LLVM_INCLUDE_DIRS})
+configure_file(include/helper/ClangPath.hpp.in include/helper/ClangPath.hpp)
+
+include_directories(include ${PROJECT_BINARY_DIR}/include ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
 # Find the libraries that correspond to the LLVM components that we wish to use.
@@ -23,6 +25,7 @@ add_executable(bitsyc
     src/ast/ASTPrinter.cpp
     src/codegen/CodeGenerator.cpp
     src/helper/ConsolePrinter.cpp
+    src/helper/PostProcessor.cpp
     src/lexer/Lexer.cpp
     src/lexer/Token.cpp
     src/parser/Parser.cpp

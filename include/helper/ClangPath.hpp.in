@@ -1,0 +1,1 @@
+#define CLANG_PATH "@CMAKE_C_COMPILER@"
