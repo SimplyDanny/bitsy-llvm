@@ -30,6 +30,6 @@ void ClangCompiler::process(const llvm::Module* module) const {
                .c_str());
 }
 
-void Executer::process(const llvm::Module* module) const {
+void Executor::process(const llvm::Module* module) const {
     system(executable.c_str());
 }
