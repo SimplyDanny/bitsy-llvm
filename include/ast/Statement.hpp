@@ -21,7 +21,7 @@ struct Block : public Statement {
 struct Program : public Statement {
     std::unique_ptr<Block> block;
 
-    Program(std::unique_ptr<Block> block) : block(std::move(block)){};
+    Program(std::unique_ptr<Block> block) : block(std::move(block)) {}
 };
 
 struct IfStatement : public Statement {
@@ -33,13 +33,13 @@ struct IfStatement : public Statement {
     IfStatement(const IfStatementType type, std::unique_ptr<Expression> expression, std::unique_ptr<Block> then_block,
                 std::unique_ptr<Block> else_block = nullptr)
         : type(type), expression(std::move(expression)), then_block(std::move(then_block)),
-          else_block(std::move(else_block)){};
+          else_block(std::move(else_block)) {}
 };
 
 struct LoopStatement : public Statement {
     std::unique_ptr<Block> block;
 
-    LoopStatement(std::unique_ptr<Block> block) : block(std::move(block)){};
+    LoopStatement(std::unique_ptr<Block> block) : block(std::move(block)) {}
 };
 
 struct PrintStatement : public Statement {

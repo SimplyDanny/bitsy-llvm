@@ -11,7 +11,7 @@ struct Expression {
 struct NumberExpression : public Expression {
     int value;
 
-    NumberExpression(int value) : value(value){};
+    NumberExpression(int value) : value(value) {}
 };
 
 struct VariableExpression : public Expression {
