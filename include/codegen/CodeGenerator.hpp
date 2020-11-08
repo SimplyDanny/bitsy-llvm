@@ -21,7 +21,7 @@ class CodeGenerator : public ASTVisitor<llvm::Value*> {
   public:
     explicit CodeGenerator(const ModuleProcessor& module_processor)
         : builder(context), module(std::make_unique<llvm::Module>("Bitsy Program", context)),
-          module_processor(module_processor){};
+          module_processor(module_processor) {}
 
   public:
     using ASTVisitor<llvm::Value*>::visit;
