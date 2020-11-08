@@ -5,11 +5,11 @@
 
 #include "lexer/Lexer.hpp"
 
-static TokenMatcher is_operator = [](auto c) {
+const static auto is_operator = [](const auto c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
 };
 
-static TokenMatcher is_identifier = [](auto c) {
+const static auto is_identifier = [](const auto c) {
     return isalnum(c) || c == '_';
 };
 
