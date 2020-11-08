@@ -5,9 +5,9 @@
 #include "helper/ClangPath.hpp"
 #include "helper/PostProcessor.hpp"
 
-static auto tmp_dir = std::filesystem::temp_directory_path() / "bitsyc";
-static auto ll_file = tmp_dir / "tmp.ll";
-static auto executable = tmp_dir / "tmp.out";
+const static auto tmp_dir = std::filesystem::temp_directory_path() / "bitsyc";
+const static auto ll_file = tmp_dir / "tmp.ll";
+const static auto executable = tmp_dir / "tmp.out";
 
 void ConsoleOutput::process(const llvm::Module* module) const {
     module->print(llvm::errs(), nullptr);
