@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
     CodeGenerator generator{[](auto module) {
         ClangCompiler().process(module);
-        Executer().process(module);
+        Executor().process(module);
     }};
     generator.visit(static_cast<Statement*>(main_block.get()));
 

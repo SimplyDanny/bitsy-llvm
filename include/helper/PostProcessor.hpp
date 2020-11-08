@@ -16,7 +16,7 @@ struct ClangCompiler : public PostProcessor {
     void process(const llvm::Module* module) const;
 };
 
-struct Executer : public PostProcessor {
+struct Executor : public PostProcessor {
     void process(const llvm::Module* module) const;
 };
 
