@@ -9,15 +9,15 @@ struct PostProcessor {
 };
 
 struct ConsoleOutput : public PostProcessor {
-    void process(const llvm::Module* module) const;
+    void process(const llvm::Module* module) const override;
 };
 
 struct ClangCompiler : public PostProcessor {
-    void process(const llvm::Module* module) const;
+    void process(const llvm::Module* module) const override;
 };
 
 struct Executor : public PostProcessor {
-    void process(const llvm::Module* module) const;
+    void process(const llvm::Module* module) const override;
 };
 
 #endif
