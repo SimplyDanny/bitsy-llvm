@@ -8,14 +8,14 @@
 
 #include "lexer/Token.hpp"
 
-typedef std::function<int(unsigned char)> TokenMatcher;
+typedef std::function<int(char)> TokenMatcher;
 
 class Lexer {
-    std::ifstream& file_stream;
-    unsigned char current_character = -1;
+    std::ifstream file_stream;
+    char current_character = '\0';
 
   public:
-    explicit Lexer(std::ifstream& file_stream) : file_stream(file_stream) {}
+    explicit Lexer(std::ifstream&& file_stream) : file_stream(std::move(file_stream)) {}
     std::vector<Token> get_tokens();
 
   private:

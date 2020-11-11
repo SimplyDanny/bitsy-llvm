@@ -10,18 +10,17 @@
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         std::cerr << "Call the program with exactly one argument which is a path to a '.bitsy' file." << std::endl;
-        exit(1);
+        return 1;
     }
 
     std::ifstream file_stream{argv[1]};
-    if (file_stream.eof()) {
-        return 0;
+    if (!file_stream.good()) {
+        std::cerr << "Cannot open the input file." << std::endl;
+        return 2;
     }
 
-    Lexer lexer{file_stream};
+    Lexer lexer{std::move(file_stream)};
     auto tokens = lexer.get_tokens();
-
-    file_stream.close();
 
     Parser parser{tokens};
     auto main_block = parser.parse();

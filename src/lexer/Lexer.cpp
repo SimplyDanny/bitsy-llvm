@@ -1,5 +1,6 @@
 #include <cctype>
 #include <cstdlib>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -17,9 +18,6 @@ std::vector<Token> Lexer::get_tokens() {
     std::vector<Token> tokens{};
     advance();
     while (true) {
-        if (file_stream.eof()) {
-            break;
-        }
         if (isspace(current_character)) {
             advance();
         } else if (isdigit(current_character)) {
@@ -68,6 +66,10 @@ std::vector<Token> Lexer::get_tokens() {
                     break;
                 }
             }
+        } else if (current_character == '\0') {
+            break;
+        } else {
+            throw std::logic_error("Cannot handle the current character.");
         }
     }
     return tokens;
@@ -75,6 +77,9 @@ std::vector<Token> Lexer::get_tokens() {
 
 void Lexer::advance() {
     current_character = file_stream.get();
+    if (file_stream.eof()) {
+        current_character = '\0';
+    }
 }
 
 std::string Lexer::get_while_matching(const TokenMatcher& matcher) {
