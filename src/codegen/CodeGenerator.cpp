@@ -43,23 +43,10 @@ void CodeGenerator::visit(const Block* block) {
 }
 
 void CodeGenerator::visit(const IfStatement* if_statement) {
-    auto expression = visit(if_statement->expression.get());
-    auto null = llvm::ConstantInt::get(builder.getInt32Ty(), 0);
-    llvm::Value* condition;
-    switch (if_statement->type) {
-    case positive:
-        condition = builder.CreateICmp(llvm::CmpInst::ICMP_SLT, null, expression);
-        break;
-    case zero:
-        condition = builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, expression);
-        break;
-    case negative:
-        condition = builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, expression);
-    }
-
     auto then_block = llvm::BasicBlock::Create(context, "then_block", main_function);
     auto continuation_block = llvm::BasicBlock::Create(context, "continuation_block", main_function);
 
+    auto condition = create_if_condition(if_statement);
     llvm::BasicBlock* else_block;
     if (if_statement->else_block) {
         else_block = llvm::BasicBlock::Create(context, "else_block", main_function);
@@ -179,4 +166,17 @@ llvm::Value* CodeGenerator::allocate_variable(const std::string& name) {
         builder.SetInsertPoint(current_insert_point);
     }
     return new_variable;
+}
+
+llvm::Value* CodeGenerator::create_if_condition(const IfStatement* if_statement) {
+    auto condition = visit(if_statement->expression.get());
+    auto null = llvm::ConstantInt::get(builder.getInt32Ty(), 0);
+    switch (if_statement->type) {
+    case positive:
+        return builder.CreateICmp(llvm::CmpInst::ICMP_SLT, null, condition);
+    case zero:
+        return builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, condition);
+    case negative:
+        return builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, condition);
+    }
 }
