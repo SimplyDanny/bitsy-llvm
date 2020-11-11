@@ -126,9 +126,7 @@ void CodeGenerator::visit(const AssignmentStatement* assignment_statement) {
         builder.CreateStore(value, known_variable);
         return;
     }
-    auto allocated_variable = builder.CreateAlloca(builder.getInt32Ty(), nullptr, variable_name);
-    known_variables[variable_name] = allocated_variable;
-    builder.CreateStore(value, allocated_variable);
+    builder.CreateStore(value, allocate_variable(variable_name));
 }
 
 void CodeGenerator::visit(const BreakStatement* break_statement) {
@@ -144,18 +142,7 @@ llvm::Value* CodeGenerator::visit(const VariableExpression* variable_expression)
     if (auto known_variable = known_variables[variable_expression->name]) {
         return builder.CreateLoad(known_variable);
     }
-    auto current_insert_point = builder.GetInsertBlock();
-    bool not_in_main_block = main_block != current_insert_point;
-    if (not_in_main_block) {
-        builder.SetInsertPoint(&(*main_block->getFirstInsertionPt()));
-    }
-    auto new_variable = builder.CreateAlloca(builder.getInt32Ty(), nullptr, variable_expression->name);
-    builder.CreateStore(llvm::ConstantInt::get(builder.getInt32Ty(), 0), new_variable);
-    known_variables[variable_expression->name] = new_variable;
-    if (not_in_main_block) {
-        builder.SetInsertPoint(current_insert_point);
-    }
-    return builder.CreateLoad(new_variable);
+    return builder.CreateLoad(allocate_variable(variable_expression->name));
 }
 
 llvm::Value* CodeGenerator::visit(const BinaryOperationExpression* binary_operation_expression) {
@@ -177,4 +164,19 @@ llvm::Value* CodeGenerator::visit(const BinaryOperationExpression* binary_operat
     default:
         llvm_unreachable("Unknown binary operator.");
     }
+}
+
+llvm::Value* CodeGenerator::allocate_variable(const std::string& name) {
+    auto current_insert_point = builder.GetInsertBlock();
+    bool not_in_main_block = main_block != current_insert_point;
+    if (not_in_main_block) {
+        builder.SetInsertPoint(&(*main_block->getFirstInsertionPt()));
+    }
+    auto new_variable = builder.CreateAlloca(builder.getInt32Ty(), nullptr, name);
+    builder.CreateStore(llvm::ConstantInt::get(builder.getInt32Ty(), 0), new_variable);
+    known_variables[name] = new_variable;
+    if (not_in_main_block) {
+        builder.SetInsertPoint(current_insert_point);
+    }
+    return new_variable;
 }
