@@ -41,6 +41,7 @@ class CodeGenerator : public ASTVisitor<llvm::Value*> {
     llvm::Value* visit(const BinaryOperationExpression* binary_operation_expression);
 
     llvm::Value* allocate_variable(const std::string& name);
+    llvm::Value* create_if_condition(const IfStatement* expression);
 };
 
 #endif
