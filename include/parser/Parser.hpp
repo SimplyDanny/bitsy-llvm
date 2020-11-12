@@ -13,7 +13,7 @@ class Parser {
     const Token* current_token;
 
   public:
-    Parser(const std::vector<Token>& tokens);
+    explicit Parser(const std::vector<Token>& tokens);
     std::unique_ptr<Program> parse();
 
   private:

@@ -15,13 +15,13 @@ struct Statement {
 struct Block : public Statement {
     std::vector<std::unique_ptr<Statement>> statements;
 
-    Block(std::vector<std::unique_ptr<Statement>> statements) : statements(std::move(statements)) {}
+    explicit Block(std::vector<std::unique_ptr<Statement>> statements) : statements(std::move(statements)) {}
 };
 
 struct Program : public Statement {
     std::unique_ptr<Block> block;
 
-    Program(std::unique_ptr<Block> block) : block(std::move(block)) {}
+    explicit Program(std::unique_ptr<Block> block) : block(std::move(block)) {}
 };
 
 struct IfStatement : public Statement {
@@ -39,19 +39,19 @@ struct IfStatement : public Statement {
 struct LoopStatement : public Statement {
     std::unique_ptr<Block> block;
 
-    LoopStatement(std::unique_ptr<Block> block) : block(std::move(block)) {}
+    explicit LoopStatement(std::unique_ptr<Block> block) : block(std::move(block)) {}
 };
 
 struct PrintStatement : public Statement {
     std::unique_ptr<Expression> expression;
 
-    PrintStatement(std::unique_ptr<Expression> expression) : expression(std::move(expression)) {}
+    explicit PrintStatement(std::unique_ptr<Expression> expression) : expression(std::move(expression)) {}
 };
 
 struct ReadStatement : public Statement {
     std::unique_ptr<VariableExpression> variable_expression;
 
-    ReadStatement(std::unique_ptr<VariableExpression> variable_expression)
+    explicit ReadStatement(std::unique_ptr<VariableExpression> variable_expression)
         : variable_expression(std::move(variable_expression)) {}
 };
 
@@ -64,7 +64,7 @@ struct AssignmentStatement : public Statement {
 };
 
 struct BreakStatement : public Statement {
-    BreakStatement() {}
+    BreakStatement() = default;
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include "llvm/IR/Module.h"
 
 struct PostProcessor {
-    virtual ~PostProcessor() {}
+    virtual ~PostProcessor() = default;
     virtual void process(const llvm::Module* module) const = 0;
 };
 

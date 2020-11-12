@@ -11,13 +11,13 @@ struct Expression {
 struct NumberExpression : public Expression {
     int value;
 
-    NumberExpression(int value) : value(value) {}
+    explicit NumberExpression(int value) : value(value) {}
 };
 
 struct VariableExpression : public Expression {
     std::string name;
 
-    VariableExpression(const std::string& name) : name(name) {}
+    explicit VariableExpression(const std::string& name) : name(name) {}
 };
 
 struct BinaryOperationExpression : public Expression {
