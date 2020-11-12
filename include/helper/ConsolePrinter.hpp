@@ -4,7 +4,7 @@
 #include <functional>
 #include <iostream>
 
-typedef std::function<void(void)> NestedPrinter;
+using NestedPrinter = std::function<void()>;
 
 class ConsolePrinter {
     unsigned int indent = 0;

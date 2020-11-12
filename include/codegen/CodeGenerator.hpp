@@ -8,7 +8,7 @@
 #include "ast/ASTVisitor.hpp"
 #include "helper/PostProcessor.hpp"
 
-typedef std::function<void(const llvm::Module*)> ModuleProcessor;
+using ModuleProcessor = std::function<void(const llvm::Module*)>;
 
 class CodeGenerator : public ASTVisitor<llvm::Value*> {
     llvm::LLVMContext context;
