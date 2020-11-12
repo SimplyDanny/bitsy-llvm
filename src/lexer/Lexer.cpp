@@ -21,42 +21,42 @@ std::vector<Token> Lexer::get_tokens() {
         if (isspace(current_character)) {
             advance();
         } else if (isdigit(current_character)) {
-            tokens.push_back(Token(t_number, get_while_matching(isdigit)));
+            tokens.emplace_back(t_number, get_while_matching(isdigit));
         } else if (is_operator(current_character)) {
-            tokens.push_back(Token(t_operator, get_while_matching(is_operator)));
+            tokens.emplace_back(t_operator, get_while_matching(is_operator));
         } else if (current_character == '=') {
-            tokens.push_back(Token(t_assignment, "="));
+            tokens.emplace_back(t_assignment, "=");
             advance();
         } else if (current_character == '(') {
-            tokens.push_back(Token(t_left_parenthesis, "("));
+            tokens.emplace_back(t_left_parenthesis, "(");
             advance();
         } else if (current_character == ')') {
-            tokens.push_back(Token(t_right_parenthesis, ")"));
+            tokens.emplace_back(t_right_parenthesis, ")");
             advance();
         } else if (is_identifier(current_character)) {
             auto token = get_while_matching(is_identifier);
             if (token == "BEGIN") {
-                tokens.push_back(Token(t_begin, token));
+                tokens.emplace_back(t_begin, token);
             } else if (token == "END") {
-                tokens.push_back(Token(t_end, token));
+                tokens.emplace_back(t_end, token);
             } else if (token == "LOOP") {
-                tokens.push_back(Token(t_loop, token));
+                tokens.emplace_back(t_loop, token);
             } else if (token == "BREAK") {
-                tokens.push_back(Token(t_break, token));
+                tokens.emplace_back(t_break, token);
             } else if (token == "IFN") {
-                tokens.push_back(Token(t_ifn, token));
+                tokens.emplace_back(t_ifn, token);
             } else if (token == "IFP") {
-                tokens.push_back(Token(t_ifp, token));
+                tokens.emplace_back(t_ifp, token);
             } else if (token == "IFZ") {
-                tokens.push_back(Token(t_ifz, token));
+                tokens.emplace_back(t_ifz, token);
             } else if (token == "ELSE") {
-                tokens.push_back(Token(t_else, token));
+                tokens.emplace_back(t_else, token);
             } else if (token == "PRINT") {
-                tokens.push_back(Token(t_print, token));
+                tokens.emplace_back(t_print, token);
             } else if (token == "READ") {
-                tokens.push_back(Token(t_read, token));
+                tokens.emplace_back(t_read, token);
             } else {
-                tokens.push_back(Token(t_variable, token));
+                tokens.emplace_back(t_variable, token);
             }
         } else if (current_character == '{') {
             while (true) {
