@@ -64,7 +64,7 @@ void ASTPrinter::visit(const AssignmentStatement* assignment_statement) {
     cout.add_endl();
 }
 
-void ASTPrinter::visit(const BreakStatement* break_statement) {
+void ASTPrinter::visit(const BreakStatement* /*break_statement*/) {
     cout << "BREAK";
     cout.add_endl();
 }
