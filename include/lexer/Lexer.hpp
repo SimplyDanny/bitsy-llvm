@@ -8,7 +8,7 @@
 
 #include "lexer/Token.hpp"
 
-typedef std::function<int(char)> TokenMatcher;
+using TokenMatcher = std::function<bool(char)>;
 
 class Lexer {
     std::ifstream file_stream;
