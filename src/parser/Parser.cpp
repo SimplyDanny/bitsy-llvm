@@ -39,7 +39,7 @@ static int get_operator_precedence(char operator_token) {
     }
 }
 
-Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) {
+Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)) {
     advance();
 }
 

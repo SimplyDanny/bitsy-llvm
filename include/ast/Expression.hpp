@@ -17,7 +17,7 @@ struct NumberExpression : public Expression {
 struct VariableExpression : public Expression {
     std::string name;
 
-    explicit VariableExpression(const std::string& name) : name(name) {}
+    explicit VariableExpression(std::string name) : name(std::move(name)) {}
 };
 
 struct BinaryOperationExpression : public Expression {

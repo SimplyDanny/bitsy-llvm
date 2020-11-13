@@ -56,11 +56,13 @@ void ASTVisitor<ExpressionReturnType>::visit(const Statement* statement) {
 
 template <class ExpressionReturnType>
 ExpressionReturnType ASTVisitor<ExpressionReturnType>::visit(const Expression* expression) {
-    if (const auto* number_expression = dynamic_cast<const NumberExpression*>(expression)) {
+    if (auto number_expression = dynamic_cast<const NumberExpression*>(expression)) {
         return visit(number_expression);
-    } else if (const auto* variable_expression = dynamic_cast<const VariableExpression*>(expression)) {
+    }
+    if (auto variable_expression = dynamic_cast<const VariableExpression*>(expression)) {
         return visit(variable_expression);
-    } else if (const auto* binary_operation_expression = dynamic_cast<const BinaryOperationExpression*>(expression)) {
+    }
+    if (auto binary_operation_expression = dynamic_cast<const BinaryOperationExpression*>(expression)) {
         return visit(binary_operation_expression);
     }
     throw std::logic_error("Unknown 'Expression' type.");
