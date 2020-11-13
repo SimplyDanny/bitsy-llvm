@@ -12,7 +12,7 @@ class ConsolePrinter {
 
   public:
     template <class T>
-    friend ConsolePrinter& operator<<(ConsolePrinter& printer, const T output);
+    friend ConsolePrinter& operator<<(ConsolePrinter& printer, T output);
 
     void add_endl();
     void indented(const NestedPrinter& nested_printer);

@@ -9,7 +9,7 @@ struct Token {
     const TokenType type;
     const std::string value;
 
-    Token(TokenType type, std::string value) : type(type), value(value) {}
+    Token(TokenType type, std::string value) : type(type), value(std::move(value)) {}
 
     void print() const;
 };

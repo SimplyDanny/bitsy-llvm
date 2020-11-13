@@ -18,9 +18,9 @@ std::vector<Token> Lexer::get_tokens() {
     std::vector<Token> tokens{};
     advance();
     while (true) {
-        if (isspace(current_character)) {
+        if (isspace(current_character) != 0) {
             advance();
-        } else if (isdigit(current_character)) {
+        } else if (isdigit(current_character) != 0) {
             tokens.emplace_back(t_number, get_while_matching(isdigit));
         } else if (is_operator(current_character)) {
             tokens.emplace_back(t_operator, get_while_matching(is_operator));
