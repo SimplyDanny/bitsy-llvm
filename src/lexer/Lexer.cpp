@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "llvm/ADT/StringSwitch.h"
+
 #include "lexer/Lexer.hpp"
 
 const static auto is_operator = [](const auto c) {
@@ -35,29 +37,19 @@ std::vector<Token> Lexer::get_tokens() {
             advance();
         } else if (is_identifier(current_character)) {
             auto token = get_while_matching(is_identifier);
-            if (token == "BEGIN") {
-                tokens.emplace_back(t_begin, token);
-            } else if (token == "END") {
-                tokens.emplace_back(t_end, token);
-            } else if (token == "LOOP") {
-                tokens.emplace_back(t_loop, token);
-            } else if (token == "BREAK") {
-                tokens.emplace_back(t_break, token);
-            } else if (token == "IFN") {
-                tokens.emplace_back(t_ifn, token);
-            } else if (token == "IFP") {
-                tokens.emplace_back(t_ifp, token);
-            } else if (token == "IFZ") {
-                tokens.emplace_back(t_ifz, token);
-            } else if (token == "ELSE") {
-                tokens.emplace_back(t_else, token);
-            } else if (token == "PRINT") {
-                tokens.emplace_back(t_print, token);
-            } else if (token == "READ") {
-                tokens.emplace_back(t_read, token);
-            } else {
-                tokens.emplace_back(t_variable, token);
-            }
+            auto token_type = llvm::StringSwitch<TokenType>(token)
+                                  .Case("BEGIN", t_begin)
+                                  .Case("END", t_end)
+                                  .Case("LOOP", t_loop)
+                                  .Case("BREAK", t_break)
+                                  .Case("IFN", t_ifn)
+                                  .Case("IFP", t_ifp)
+                                  .Case("IFZ", t_ifz)
+                                  .Case("ELSE", t_else)
+                                  .Case("PRINT", t_print)
+                                  .Case("READ", t_read)
+                                  .Default(t_variable);
+            tokens.emplace_back(token_type, token);
         } else if (current_character == '{') {
             while (true) {
                 advance();
