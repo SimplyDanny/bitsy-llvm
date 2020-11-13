@@ -15,7 +15,9 @@ class Lexer {
     char current_character = '\0';
 
   public:
-    explicit Lexer(std::ifstream&& file_stream) : file_stream(std::move(file_stream)) {}
+    explicit Lexer(std::ifstream&& file_stream)
+        : file_stream(std::move(file_stream)) {}
+
     std::vector<Token> get_tokens();
 
   private:

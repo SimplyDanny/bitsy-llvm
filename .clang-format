@@ -1,6 +1,8 @@
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortLambdasOnASingleLine: Empty
 AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
 ColumnLimit: 120
 IndentWidth: 4
 PointerAlignment: Left
