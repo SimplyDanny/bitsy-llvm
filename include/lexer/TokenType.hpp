@@ -27,10 +27,6 @@ enum TokenType {
     // Built-ins
     t_print,
     t_read,
-
-    // Ignorables
-    t_comment,
-    t_whitespace,
 };
 
 #endif

@@ -8,12 +8,10 @@
 #include "lexer/Token.hpp"
 
 class Parser {
-    std::vector<Token> tokens;
-    int current_token_index = -1;
-    const Token* current_token;
+    std::vector<Token>::iterator token;
 
   public:
-    explicit Parser(std::vector<Token> tokens);
+    explicit Parser(std::vector<Token>& tokens);
     std::unique_ptr<Program> parse();
 
   private:
