@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    Lexer lexer{std::move(file_stream)};
+    Lexer lexer{file_stream};
     auto tokens = lexer.get_tokens();
 
     Parser parser{tokens};
