@@ -9,11 +9,11 @@
 
 const static Iterator iterator_end;
 
-const static auto is_operator = [](const auto c) {
+const static auto is_operator = [](auto c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
 };
 
-const static auto is_identifier = [](const auto c) {
+const static auto is_identifier = [](auto c) {
     return isalnum(c) || c == '_';
 };
 
