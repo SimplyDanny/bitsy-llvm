@@ -59,7 +59,7 @@ std::unique_ptr<Program> Parser::parse() {
 }
 
 std::unique_ptr<Block> Parser::parse_block(const TokenType additional_stop_token) {
-    std::vector<std::unique_ptr<Statement>> statements{};
+    std::vector<std::unique_ptr<Statement>> statements;
     while ((++token)->type != t_end && token->type != additional_stop_token) {
         statements.push_back(parse_statement());
     };

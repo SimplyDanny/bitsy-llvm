@@ -18,7 +18,7 @@ const static auto is_identifier = [](auto c) {
 };
 
 std::vector<Token> Lexer::get_tokens() {
-    std::vector<Token> tokens{};
+    std::vector<Token> tokens;
     while (current_character != iterator_end) {
         if (isspace(*current_character) != 0) {
             ++current_character;
@@ -60,7 +60,7 @@ std::vector<Token> Lexer::get_tokens() {
 }
 
 std::string Lexer::get_while_matching(const TokenMatcher& matcher) {
-    std::string value{};
+    std::string value;
     do {
         value += *current_character++;
     } while (current_character != iterator_end && matcher(*current_character));

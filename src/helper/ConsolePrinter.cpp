@@ -11,4 +11,4 @@ void ConsolePrinter::indented(const NestedPrinter& nested_printer) {
     --indent;
 }
 
-ConsolePrinter cout{};
+ConsolePrinter cout;
