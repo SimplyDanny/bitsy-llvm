@@ -16,7 +16,7 @@ void ConsoleOutput::process(const llvm::Module* module) const {
 void ClangCompiler::process(const llvm::Module* module) const {
     std::filesystem::create_directory(tmp_dir);
 
-    std::error_code error_code{};
+    std::error_code error_code;
     llvm::raw_fd_ostream file_stream{ll_file.string(), error_code};
     module->print(file_stream, nullptr);
 
