@@ -27,13 +27,13 @@ std::vector<Token> Lexer::get_tokens() {
         } else if (is_operator(*current_character)) {
             tokens.emplace_back(t_operator, get_while_matching(is_operator));
         } else if (*current_character == '=') {
-            tokens.emplace_back(t_assignment, "=");
+            tokens.emplace_back(t_assignment, *current_character);
             ++current_character;
         } else if (*current_character == '(') {
-            tokens.emplace_back(t_left_parenthesis, "(");
+            tokens.emplace_back(t_left_parenthesis, *current_character);
             ++current_character;
         } else if (*current_character == ')') {
-            tokens.emplace_back(t_right_parenthesis, ")");
+            tokens.emplace_back(t_right_parenthesis, *current_character);
             ++current_character;
         } else if (is_identifier(*current_character)) {
             auto token = get_while_matching(is_identifier);
