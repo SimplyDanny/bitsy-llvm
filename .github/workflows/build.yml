@@ -1,0 +1,49 @@
+name: CMake Build
+
+on: [push]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache LLVM and Clang
+      id: cache-llvm
+      uses: actions/cache@v2
+      with:
+        path: ${{runner.temp}}/llvm
+        key: llvm-11.0
+
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "11.0"
+        directory: ${{runner.temp}}/llvm
+        cached: ${{steps.cache-llvm.outputs.cache-hit}}
+
+    - name: Use Clang compiler
+      shell: bash
+      run: |
+         echo "CXX=clang++" >> $GITHUB_ENV
+         echo "CC=clang" >> $GITHUB_ENV
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: >
+        cmake $GITHUB_WORKSPACE
+        -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+        -DLLVM_DIR=${{runner.temp}}/llvm/lib/cmake/llvm/
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
