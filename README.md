@@ -1,5 +1,7 @@
 # BitsyLLVM
 
+![CMake Build](https://github.com/SimplyDanny/bitsy-llvm/workflows/CMake%20Build/badge.svg)
+
 BitsyLLVM (also "bitsyc") is a compiler for the
 [Bitsy](https://github.com/apbendi/bitsyspec) language implemented in C++ using
 the [LLVM](https://llvm.org) framework to handle the code generation step.
