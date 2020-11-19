@@ -26,12 +26,6 @@ jobs:
         directory: ${{runner.temp}}/llvm
         cached: ${{steps.cache-llvm.outputs.cache-hit}}
 
-    - name: Use Clang compiler
-      shell: bash
-      run: |
-         echo "CXX=clang++" >> $GITHUB_ENV
-         echo "CC=clang" >> $GITHUB_ENV
-
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
 
@@ -41,6 +35,8 @@ jobs:
       run: >
         cmake $GITHUB_WORKSPACE
         -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+        -DCMAKE_C_COMPILER=${{runner.temp}}/llvm/bin/clang
+        -DCMAKE_CXX_COMPILER=${{runner.temp}}/llvm/bin/clang++
         -DLLVM_DIR=${{runner.temp}}/llvm/lib/cmake/llvm/
 
     - name: Build
