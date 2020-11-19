@@ -11,9 +11,8 @@ the [LLVM](https://llvm.org) framework to handle the code generation step.
 After cloning this repository, create a `build` folder at the project root,
 enter it
 
-    cd bitsy-llvm
-    mkdir build
-    cd build
+    mkdir -p bitsy-llvm/build
+    cd bitsy-llvm/build
 
 and run CMake like:
 
@@ -23,11 +22,13 @@ and run CMake like:
         -DLLVM_DIR=/path/to/llvm/installation   \
         ..
 
-Make sure that there is an installation of LLVM on your system. It is necessary
-that the Clang compiler is used to build bitsyc and that CMake knows where to
-find the LLVM configuration (`LLVM_DIR`). Make sure that the values of
-`CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be found in the `PATH` or use
-absolute paths.
+Make sure that there is an installation of LLVM on your system. Although not
+strictly necessary, it is recommended to use the Clang compiler bundled with the
+LLVM installation to build bitsyc. Since the same compiler is also used at
+runtime, bitsyc may otherwise not be usable. CMake needs to find the LLVM
+configuration (`LLVM_DIR`). In case you do not use your system's default
+compiler, make sure that the values of `CMAKE_C_COMPILER` and
+`CMAKE_CXX_COMPILER` can be found in the `PATH` or use absolute paths.
 
 Finally, build bitsyc with the build tool (Make, Ninja, ...) CMake has chosen or
 which you specified in the `cmake` call above with the `-G` argument. Depending
