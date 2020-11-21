@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout BitsyLLVM
+      uses: actions/checkout@v2
+      with:
+        path: bitsy-llvm
 
     - name: Cache LLVM and Clang
       id: cache-llvm
@@ -27,19 +30,30 @@ jobs:
         cached: ${{steps.cache-llvm.outputs.cache-hit}}
 
     - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/build
+      run: cmake -E make_directory ${{github.workspace}}/bitsy-llvm/build
 
     - name: Configure CMake
       shell: bash
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/bitsy-llvm/build
       run: >
-        cmake $GITHUB_WORKSPACE
+        cmake ..
         -DCMAKE_BUILD_TYPE=$BUILD_TYPE
         -DCMAKE_C_COMPILER=${{runner.temp}}/llvm/bin/clang
         -DCMAKE_CXX_COMPILER=${{runner.temp}}/llvm/bin/clang++
         -DLLVM_DIR=${{runner.temp}}/llvm/lib/cmake/llvm/
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/bitsy-llvm/build
       shell: bash
       run: cmake --build . --config $BUILD_TYPE
+
+    - name: Checkout bitsyspec
+      uses: actions/checkout@v2
+      with:
+        repository:  apbendi/bitsyspec
+        path: bitsyspec
+
+    - name: Run tests
+      working-directory: ${{github.workspace}}/bitsy-llvm
+      shell: bash
+      run: ./test/run.py
