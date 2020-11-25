@@ -4,5 +4,6 @@ AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 ColumnLimit: 120
+IndentCaseLabels: true
 IndentWidth: 4
 PointerAlignment: Left

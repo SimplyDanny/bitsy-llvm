@@ -136,20 +136,20 @@ llvm::Value* CodeGenerator::visit(const BinaryOperationExpression* binary_operat
     auto lhs = visit(binary_operation_expression->left_expression.get());
     auto rhs = visit(binary_operation_expression->right_expression.get());
     switch (binary_operation_expression->operator_symbol) {
-    case '+':
-        return builder.CreateAdd(lhs, rhs);
-    case '-':
-        return builder.CreateSub(lhs, rhs);
-    case '*':
-        return builder.CreateMul(lhs, rhs);
-    case '/': {
-        auto div = builder.CreateSDiv(lhs, rhs);
-        return builder.CreateIntCast(div, builder.getInt32Ty(), true);
-    }
-    case '%':
-        return builder.CreateSRem(lhs, rhs);
-    default:
-        llvm_unreachable("Unknown binary operator.");
+        case '+':
+            return builder.CreateAdd(lhs, rhs);
+        case '-':
+            return builder.CreateSub(lhs, rhs);
+        case '*':
+            return builder.CreateMul(lhs, rhs);
+        case '/': {
+            auto div = builder.CreateSDiv(lhs, rhs);
+            return builder.CreateIntCast(div, builder.getInt32Ty(), true);
+        }
+        case '%':
+            return builder.CreateSRem(lhs, rhs);
+        default:
+            llvm_unreachable("Unknown binary operator.");
     }
 }
 
@@ -172,11 +172,11 @@ llvm::Value* CodeGenerator::create_if_condition(const IfStatement* if_statement)
     auto condition = visit(if_statement->expression.get());
     auto null = llvm::ConstantInt::get(builder.getInt32Ty(), 0);
     switch (if_statement->type) {
-    case positive:
-        return builder.CreateICmp(llvm::CmpInst::ICMP_SLT, null, condition);
-    case zero:
-        return builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, condition);
-    case negative:
-        return builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, condition);
+        case positive:
+            return builder.CreateICmp(llvm::CmpInst::ICMP_SLT, null, condition);
+        case zero:
+            return builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, condition);
+        case negative:
+            return builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, condition);
     }
 }

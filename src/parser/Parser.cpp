@@ -15,28 +15,28 @@ static auto log_statement_error(const char* string) {
 
 static IfStatementType get_if_type_from_token_type(const TokenType token_type) {
     switch (token_type) {
-    case t_ifz:
-        return zero;
-    case t_ifp:
-        return positive;
-    case t_ifn:
-        return negative;
-    default:
-        throw std::invalid_argument("No valid if-statement type for given token type.");
+        case t_ifz:
+            return zero;
+        case t_ifp:
+            return positive;
+        case t_ifn:
+            return negative;
+        default:
+            throw std::invalid_argument("No valid if-statement type for given token type.");
     }
 }
 
 static int get_operator_precedence(char operator_token) {
     switch (operator_token) {
-    case '+':
-    case '-':
-        return 100;
-    case '*':
-    case '/':
-    case '%':
-        return 200;
-    default:
-        return -1;
+        case '+':
+        case '-':
+            return 100;
+        case '*':
+        case '/':
+        case '%':
+            return 200;
+        default:
+            return -1;
     }
 }
 
@@ -75,19 +75,19 @@ std::unique_ptr<Expression> Parser::parse_expression() {
 
 std::unique_ptr<Expression> Parser::parse_single_expression_component() {
     switch ((++token)->type) {
-    case t_operator:
-        if (token->value == "-" || token->value == "+") {
-            return std::make_unique<NumberExpression>(std::stoi(token->value + (++token)->value));
-        }
-        return log_expression_error("Unknown unary operator.");
-    case t_number:
-        return std::make_unique<NumberExpression>(std::stoi(token->value));
-    case t_variable:
-        return std::make_unique<VariableExpression>(token->value);
-    case t_left_parenthesis:
-        return parse_parenthesis_expression();
-    default:
-        return log_expression_error("Unknown token type during expression parsing.");
+        case t_operator:
+            if (token->value == "-" || token->value == "+") {
+                return std::make_unique<NumberExpression>(std::stoi(token->value + (++token)->value));
+            }
+            return log_expression_error("Unknown unary operator.");
+        case t_number:
+            return std::make_unique<NumberExpression>(std::stoi(token->value));
+        case t_variable:
+            return std::make_unique<VariableExpression>(token->value);
+        case t_left_parenthesis:
+            return parse_parenthesis_expression();
+        default:
+            return log_expression_error("Unknown token type during expression parsing.");
     }
 }
 
@@ -134,36 +134,35 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
 
 std::unique_ptr<Statement> Parser::parse_statement() {
     switch (token->type) {
-    case t_ifn:
-    case t_ifp:
-    case t_ifz: {
-        auto type = get_if_type_from_token_type(token->type);
-        auto expression = parse_expression();
-        auto then_block = parse_block(t_else);
-        auto else_block = token->type == t_else ? parse_block() : nullptr;
-        return std::make_unique<IfStatement>(type, std::move(expression), std::move(then_block), std::move(else_block));
-    }
-    case t_loop: {
-        return std::make_unique<LoopStatement>(parse_block());
-    }
-    case t_print: {
-        return std::make_unique<PrintStatement>(parse_expression());
-    }
-    case t_read: {
-        auto variable_expression = std::make_unique<VariableExpression>((++token)->value);
-        return std::make_unique<ReadStatement>(std::move(variable_expression));
-    }
-    case t_break:
-        return std::make_unique<BreakStatement>();
-    case t_variable: {
-        auto assignee = std::make_unique<VariableExpression>(token->value);
-        if ((++token)->type != t_assignment) {
-            return log_statement_error("Expecting an assignment operator '='.");
+        case t_ifn:
+        case t_ifp:
+        case t_ifz: {
+            auto type = get_if_type_from_token_type(token->type);
+            auto expression = parse_expression();
+            auto then_block = parse_block(t_else);
+            auto else_block = token->type == t_else ? parse_block() : nullptr;
+            return std::make_unique<IfStatement>(type, std::move(expression), std::move(then_block),
+                                                 std::move(else_block));
         }
-        auto assignment = parse_expression();
-        return std::make_unique<AssignmentStatement>(std::move(assignee), std::move(assignment));
-    }
-    default:
-        return log_statement_error("Unknown token type.");
+        case t_loop:
+            return std::make_unique<LoopStatement>(parse_block());
+        case t_print:
+            return std::make_unique<PrintStatement>(parse_expression());
+        case t_read: {
+            auto variable_expression = std::make_unique<VariableExpression>((++token)->value);
+            return std::make_unique<ReadStatement>(std::move(variable_expression));
+        }
+        case t_break:
+            return std::make_unique<BreakStatement>();
+        case t_variable: {
+            auto assignee = std::make_unique<VariableExpression>(token->value);
+            if ((++token)->type != t_assignment) {
+                return log_statement_error("Expecting an assignment operator '='.");
+            }
+            auto assignment = parse_expression();
+            return std::make_unique<AssignmentStatement>(std::move(assignee), std::move(assignment));
+        }
+        default:
+            return log_statement_error("Unknown token type.");
     }
 }
