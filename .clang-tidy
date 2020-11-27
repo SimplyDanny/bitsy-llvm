@@ -4,4 +4,4 @@ Checks: >-
     modernize-*,-modernize-use-trailing-return-type,
     performance-*,
     portability-*,
-    readability-*,-readability-qualified-auto
+    readability-*,-readability-qualified-auto,-readability-magic-numbers
