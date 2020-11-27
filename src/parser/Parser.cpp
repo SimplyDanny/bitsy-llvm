@@ -3,16 +3,6 @@
 
 #include "parser/Parser.hpp"
 
-static auto log_expression_error(const char* string) {
-    std::cerr << "Error parsing expression: " << string << std::endl;
-    return nullptr;
-}
-
-static auto log_statement_error(const char* string) {
-    std::cerr << "Error parsing statement: " << string << std::endl;
-    return nullptr;
-}
-
 static IfStatementType get_if_type_from_token_type(const TokenType token_type) {
     switch (token_type) {
         case t_ifz:
@@ -49,11 +39,11 @@ Parser::Parser(std::vector<Token>& tokens)
 
 std::unique_ptr<Program> Parser::parse() {
     if (token->type != t_begin) {
-        return log_statement_error("Expecting token 'BEGIN'.");
+        throw std::logic_error("Expecting token 'BEGIN'.");
     }
     auto block = parse_block();
     if (token->type != t_end) {
-        return log_statement_error("Expecting token 'END'.");
+        throw std::logic_error("Expecting token 'END'.");
     }
     return std::make_unique<Program>(std::move(block));
 }
@@ -79,7 +69,7 @@ std::unique_ptr<Expression> Parser::parse_single_expression_component() {
             if (token->value == "-" || token->value == "+") {
                 return std::make_unique<NumberExpression>(std::stoi(token->value + (++token)->value));
             }
-            return log_expression_error("Unknown unary operator.");
+            throw std::logic_error("Unknown unary operator.");
         case t_number:
             return std::make_unique<NumberExpression>(std::stoi(token->value));
         case t_variable:
@@ -87,21 +77,21 @@ std::unique_ptr<Expression> Parser::parse_single_expression_component() {
         case t_left_parenthesis:
             return parse_parenthesis_expression();
         default:
-            return log_expression_error("Unknown token type during expression parsing.");
+            throw std::logic_error("Unknown token type during expression parsing.");
     }
 }
 
 std::unique_ptr<Expression> Parser::parse_parenthesis_expression() {
     if (token->type != t_left_parenthesis) {
-        return log_expression_error("Expected opening parenthesis token.");
+        throw std::logic_error("Expected opening parenthesis token.");
     }
     if (auto inner_expression = parse_expression()) {
         if ((++token)->type != t_right_parenthesis) {
-            return log_expression_error("Expected closing parenthesis token.");
+            throw std::logic_error("Expected closing parenthesis token.");
         }
         return inner_expression;
     }
-    return log_expression_error("Expression inside of parentheses cannot be parsed.");
+    throw std::logic_error("Expression inside of parentheses cannot be parsed.");
 }
 
 std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
@@ -118,7 +108,7 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
         ++token;
         auto right_expression = parse_single_expression_component();
         if (!right_expression) {
-            return log_expression_error("Unable to parse right hand side expression.");
+            throw std::logic_error("Unable to parse right hand side expression.");
         }
         int next_operator_precedence = get_operator_precedence((token + 1)->value[0]);
         if (operator_precedence < next_operator_precedence) {
@@ -157,12 +147,12 @@ std::unique_ptr<Statement> Parser::parse_statement() {
         case t_variable: {
             auto assignee = std::make_unique<VariableExpression>(token->value);
             if ((++token)->type != t_assignment) {
-                return log_statement_error("Expecting an assignment operator '='.");
+                throw std::logic_error("Expecting an assignment operator '='.");
             }
             auto assignment = parse_expression();
             return std::make_unique<AssignmentStatement>(std::move(assignee), std::move(assignment));
         }
         default:
-            return log_statement_error("Unknown token type.");
+            throw std::logic_error("Unknown token type.");
     }
 }
