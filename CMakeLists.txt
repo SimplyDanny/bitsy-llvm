@@ -26,7 +26,6 @@ add_executable(bitsyc
     src/codegen/CodeGenerator.cpp
     src/helper/ConsolePrinter.cpp
     src/helper/PostProcessor.cpp
-    src/lexer/Lexer.cpp
     src/lexer/Token.cpp
     src/parser/Parser.cpp
 )

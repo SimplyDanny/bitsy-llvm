@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <iterator>
 
 #include "ast/ASTPrinter.hpp"
 #include "codegen/CodeGenerator.hpp"
@@ -19,7 +20,7 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    Lexer lexer{file_stream};
+    Lexer lexer{std::istreambuf_iterator<char>(file_stream), std::istreambuf_iterator<char>()};
     auto tokens = lexer.get_tokens();
 
     Parser parser{tokens};
