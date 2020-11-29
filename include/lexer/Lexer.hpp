@@ -32,14 +32,9 @@ class Lexer {
 
   private:
     std::string get_while_matching(const TokenMatcher& matcher);
-};
 
-const inline auto is_operator = [](auto c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
-};
-
-const inline auto is_identifier = [](auto c) {
-    return isalnum(c) || c == '_';
+    static bool is_operator(char c);
+    static bool is_identifier(char c);
 };
 
 template <class InputIterator>
@@ -92,6 +87,16 @@ std::string Lexer<InputIterator>::get_while_matching(const TokenMatcher& matcher
         value += *current_character++;
     } while (current_character != characters_end && matcher(*current_character));
     return value;
+}
+
+template <class InputIterator>
+bool Lexer<InputIterator>::is_operator(const char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
+}
+
+template <class InputIterator>
+bool Lexer<InputIterator>::is_identifier(const char c) {
+    return (isalnum(c) != 0) || c == '_';
 }
 
 #endif
