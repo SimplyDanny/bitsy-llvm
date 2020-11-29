@@ -6,8 +6,8 @@
 #include "lexer/TokenType.hpp"
 
 struct Token {
-    const TokenType type;
-    const std::string value;
+    TokenType type;
+    std::string value;
 
     Token(TokenType type, std::string value)
         : type(type)

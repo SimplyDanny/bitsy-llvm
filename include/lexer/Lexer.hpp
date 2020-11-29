@@ -1,12 +1,12 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
-#include <fstream>
 #include <functional>
 #include <iterator>
+#include <memory>
+#include <optional>
 #include <string>
 #include <type_traits>
-#include <vector>
 
 #include "llvm/ADT/StringSwitch.h"
 
@@ -15,22 +15,28 @@
 using TokenMatcher = std::function<bool(char)>;
 
 template <class InputIterator>
-class Lexer {
+class Lexer : public std::iterator<std::input_iterator_tag, Token> {
 
-    static_assert(std::is_same<typename std::iterator_traits<InputIterator>::value_type, char>::value,
+    static_assert(std::is_same<typename std::iterator_traits<InputIterator>::value_type, char>(),
                   "Expecting iterator over 'char' type.");
 
     InputIterator current_character;
     InputIterator characters_end;
 
-  public:
-    explicit Lexer(InputIterator begin, InputIterator end)
-        : current_character(begin)
-        , characters_end(end) {}
+    std::optional<Token> current_token;
 
-    std::vector<Token> get_tokens();
+  public:
+    Lexer(InputIterator begin, InputIterator end);
+    Lexer() = default;
+
+    Token operator*() const;
+    Token& operator++();
+    Token operator++(int);
+    bool operator==(const Lexer& other) const;
+    bool operator!=(const Lexer& other) const;
 
   private:
+    std::optional<Token> next();
     std::string get_while_matching(const TokenMatcher& matcher);
 
     static bool is_operator(char c);
@@ -38,24 +44,56 @@ class Lexer {
 };
 
 template <class InputIterator>
-std::vector<Token> Lexer<InputIterator>::get_tokens() {
-    std::vector<Token> tokens;
+Lexer<InputIterator>::Lexer(InputIterator begin, InputIterator end)
+    : current_character(begin)
+    , characters_end(end) {
+    if (current_character != characters_end) {
+        ++(*this);
+    }
+}
+
+template <class InputIterator>
+Token Lexer<InputIterator>::operator*() const {
+    return *current_token;
+}
+
+template <class InputIterator>
+Token& Lexer<InputIterator>::operator++() {
+    return *(current_token = next());
+}
+
+template <class InputIterator>
+Token Lexer<InputIterator>::operator++(int) {
+    auto tmp_token = std::move(current_token);
+    ++(*this);
+    return *tmp_token;
+}
+
+template <class InputIterator>
+bool Lexer<InputIterator>::operator==(const Lexer& other) const {
+    return current_token.has_value() == other.current_token.has_value();
+}
+
+template <class InputIterator>
+bool Lexer<InputIterator>::operator!=(const Lexer& other) const {
+    return !(*this == other);
+}
+
+template <class InputIterator>
+std::optional<Token> Lexer<InputIterator>::next() {
     while (current_character != characters_end) {
         if (isspace(*current_character) != 0) {
             ++current_character;
         } else if (isdigit(*current_character) != 0) {
-            tokens.emplace_back(t_number, get_while_matching(isdigit));
+            return Token(t_number, get_while_matching(isdigit));
         } else if (is_operator(*current_character)) {
-            tokens.emplace_back(t_operator, get_while_matching(is_operator));
+            return Token(t_operator, get_while_matching(is_operator));
         } else if (*current_character == '=') {
-            tokens.emplace_back(t_assignment, *current_character);
-            ++current_character;
+            return Token(t_assignment, *current_character++);
         } else if (*current_character == '(') {
-            tokens.emplace_back(t_left_parenthesis, *current_character);
-            ++current_character;
+            return Token(t_left_parenthesis, *current_character++);
         } else if (*current_character == ')') {
-            tokens.emplace_back(t_right_parenthesis, *current_character);
-            ++current_character;
+            return Token(t_right_parenthesis, *current_character++);
         } else if (is_identifier(*current_character)) {
             auto token = get_while_matching(is_identifier);
             auto token_type = llvm::StringSwitch<TokenType>(token)
@@ -70,14 +108,14 @@ std::vector<Token> Lexer<InputIterator>::get_tokens() {
                                   .Case("PRINT", t_print)
                                   .Case("READ", t_read)
                                   .Default(t_variable);
-            tokens.emplace_back(token_type, token);
+            return Token(token_type, token);
         } else if (*current_character == '{') {
             current_character = std::next(std::find(current_character, characters_end, '}'));
         } else {
             throw std::logic_error("Cannot handle the current character.");
         }
     }
-    return tokens;
+    return {};
 }
 
 template <class InputIterator>

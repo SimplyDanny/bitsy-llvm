@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    Lexer lexer{std::istreambuf_iterator<char>(file_stream), std::istreambuf_iterator<char>()};
-    auto tokens = lexer.get_tokens();
+    Lexer<std::istreambuf_iterator<char>> lexer{file_stream, {}};
+    std::vector<Token> tokens{lexer, decltype(lexer)()};
 
     Parser parser{tokens};
     auto main_block = parser.parse();
