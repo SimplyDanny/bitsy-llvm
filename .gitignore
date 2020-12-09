@@ -3,3 +3,4 @@
 .cache
 .clangd
 build
+*.code-workspace
