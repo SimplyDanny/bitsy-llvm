@@ -1,14 +1,20 @@
 #include "helper/ConsolePrinter.hpp"
 
-void ConsolePrinter::add_endl() {
-    std::cout << std::endl;
-    last_was_endl = true;
-}
-
-void ConsolePrinter::indented(const NestedPrinter& nested_printer) {
+ConsolePrinter& ConsolePrinter::operator<<(const NestedPrinter& nested_printer) {
     ++indent;
     nested_printer();
     --indent;
+    return *this;
+};
+
+ConsolePrinter& ConsolePrinter::operator<<(const EndlPrinter& endl_printer) {
+    endl_printer(*this);
+    return *this;
+}
+
+void endl(ConsolePrinter& printer) {
+    std::cout << std::endl;
+    printer.last_was_endl = true;
 }
 
 ConsolePrinter cout;

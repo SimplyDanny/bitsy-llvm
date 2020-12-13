@@ -3,30 +3,40 @@
 
 #include <functional>
 #include <iostream>
+#include <type_traits>
+
+class ConsolePrinter;
 
 using NestedPrinter = std::function<void()>;
+using EndlPrinter = std::function<void(ConsolePrinter&)>;
+
+template <class T>
+inline constexpr bool is_printer = std::is_convertible_v<T, NestedPrinter> || std::is_convertible_v<T, EndlPrinter>;
 
 class ConsolePrinter {
     unsigned int indent = 0;
     bool last_was_endl = true;
 
   public:
-    template <class T>
-    friend ConsolePrinter& operator<<(ConsolePrinter& printer, T output);
+    template <class T, std::enable_if_t<!is_printer<T>, bool> = true>
+    ConsolePrinter& operator<<(T output);
+    ConsolePrinter& operator<<(const NestedPrinter& nested_printer);
+    ConsolePrinter& operator<<(const EndlPrinter& endl_printer);
 
-    void add_endl();
-    void indented(const NestedPrinter& nested_printer);
+    friend void endl(ConsolePrinter& printer);
 };
 
-template <class T>
-ConsolePrinter& operator<<(ConsolePrinter& printer, const T output) {
-    if (printer.last_was_endl) {
-        std::cout << std::string(2 * printer.indent, ' ');
+template <class T, std::enable_if_t<!is_printer<T>, bool>>
+ConsolePrinter& ConsolePrinter::operator<<(const T output) {
+    if (last_was_endl) {
+        std::cout << std::string(2 * indent, ' ');
     }
     std::cout << output;
-    printer.last_was_endl = false;
-    return printer;
+    last_was_endl = false;
+    return *this;
 };
+
+void endl(ConsolePrinter& printer);
 
 extern ConsolePrinter cout;
 
