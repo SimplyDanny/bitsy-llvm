@@ -5,20 +5,18 @@
 #include <iostream>
 #include <type_traits>
 
-class ConsolePrinter;
-
-using NestedPrinter = std::function<void()>;
-using EndlPrinter = std::function<void(ConsolePrinter&)>;
-
-template <class T>
-inline constexpr bool is_printer = std::is_convertible_v<T, NestedPrinter> || std::is_convertible_v<T, EndlPrinter>;
-
 class ConsolePrinter {
+    using NestedPrinter = std::function<void()>;
+    using EndlPrinter = std::function<void(ConsolePrinter&)>;
+
+    template <class T>
+    static constexpr bool is_printer = std::is_convertible_v<T, NestedPrinter> || std::is_convertible_v<T, EndlPrinter>;
+
     unsigned int indent = 0;
     bool last_was_endl = true;
 
   public:
-    template <class T, std::enable_if_t<!is_printer<T>, bool> = true>
+    template <class T, std::enable_if_t<!ConsolePrinter::is_printer<T>, bool> = true>
     ConsolePrinter& operator<<(T output);
     ConsolePrinter& operator<<(const NestedPrinter& nested_printer);
     ConsolePrinter& operator<<(const EndlPrinter& endl_printer);
@@ -26,7 +24,7 @@ class ConsolePrinter {
     friend void endl(ConsolePrinter& printer);
 };
 
-template <class T, std::enable_if_t<!is_printer<T>, bool>>
+template <class T, std::enable_if_t<!ConsolePrinter::is_printer<T>, bool>>
 ConsolePrinter& ConsolePrinter::operator<<(const T output) {
     if (last_was_endl) {
         std::cout << std::string(2 * indent, ' ');

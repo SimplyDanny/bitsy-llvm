@@ -5,7 +5,7 @@ ConsolePrinter& ConsolePrinter::operator<<(const NestedPrinter& nested_printer) 
     nested_printer();
     --indent;
     return *this;
-};
+}
 
 ConsolePrinter& ConsolePrinter::operator<<(const EndlPrinter& endl_printer) {
     endl_printer(*this);
