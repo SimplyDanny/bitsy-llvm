@@ -33,21 +33,21 @@ class ASTVisitor {
 
 template <class ExpressionReturnType>
 void ASTVisitor<ExpressionReturnType>::visit(const Statement* statement) {
-    if (auto program = dynamic_cast<const Program*>(statement)) {
+    if (auto program = llvm::dyn_cast<Program>(statement)) {
         visit(program);
-    } else if (auto block = dynamic_cast<const Block*>(statement)) {
+    } else if (auto block = llvm::dyn_cast<Block>(statement)) {
         visit(block);
-    } else if (auto if_statement = dynamic_cast<const IfStatement*>(statement)) {
+    } else if (auto if_statement = llvm::dyn_cast<IfStatement>(statement)) {
         visit(if_statement);
-    } else if (auto loop_statement = dynamic_cast<const LoopStatement*>(statement)) {
+    } else if (auto loop_statement = llvm::dyn_cast<LoopStatement>(statement)) {
         visit(loop_statement);
-    } else if (auto print_statement = dynamic_cast<const PrintStatement*>(statement)) {
+    } else if (auto print_statement = llvm::dyn_cast<PrintStatement>(statement)) {
         visit(print_statement);
-    } else if (auto read_statement = dynamic_cast<const ReadStatement*>(statement)) {
+    } else if (auto read_statement = llvm::dyn_cast<ReadStatement>(statement)) {
         visit(read_statement);
-    } else if (auto assignment_statement = dynamic_cast<const AssignmentStatement*>(statement)) {
+    } else if (auto assignment_statement = llvm::dyn_cast<AssignmentStatement>(statement)) {
         visit(assignment_statement);
-    } else if (auto break_statement = dynamic_cast<const BreakStatement*>(statement)) {
+    } else if (auto break_statement = llvm::dyn_cast<BreakStatement>(statement)) {
         visit(break_statement);
     } else {
         throw std::logic_error("Unknown 'Statement' type.");
@@ -56,13 +56,13 @@ void ASTVisitor<ExpressionReturnType>::visit(const Statement* statement) {
 
 template <class ExpressionReturnType>
 ExpressionReturnType ASTVisitor<ExpressionReturnType>::visit(const Expression* expression) {
-    if (auto number_expression = dynamic_cast<const NumberExpression*>(expression)) {
+    if (auto number_expression = llvm::dyn_cast<NumberExpression>(expression)) {
         return visit(number_expression);
     }
-    if (auto variable_expression = dynamic_cast<const VariableExpression*>(expression)) {
+    if (auto variable_expression = llvm::dyn_cast<VariableExpression>(expression)) {
         return visit(variable_expression);
     }
-    if (auto binary_operation_expression = dynamic_cast<const BinaryOperationExpression*>(expression)) {
+    if (auto binary_operation_expression = llvm::dyn_cast<BinaryOperationExpression>(expression)) {
         return visit(binary_operation_expression);
     }
     throw std::logic_error("Unknown 'Expression' type.");
