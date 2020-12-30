@@ -1,19 +1,23 @@
+#include <algorithm>
 #include <filesystem>
-#include <random>
-#include <string>
 
+#include "llvm/ExecutionEngine/ExecutionEngine.h"
+#include "llvm/ExecutionEngine/GenericValue.h"
+#include "llvm/ExecutionEngine/MCJIT.h"
+#include "llvm/IR/Verifier.h"
+#include "llvm/Support/TargetSelect.h"
+
+#include "execution/ModuleProcessor.hpp"
 #include "helper/ClangPath.hpp"
-#include "helper/PostProcessor.hpp"
 
 const static auto tmp_dir = std::filesystem::temp_directory_path() / "bitsyc";
 const static auto ll_file = tmp_dir / "tmp.ll";
-const static auto executable = tmp_dir / "tmp.out";
 
-void ConsoleOutput::process(const llvm::Module* module) const {
-    module->print(llvm::errs(), nullptr);
+void ModuleProcessor::print() const {
+    module->print(llvm::outs(), nullptr);
 }
 
-void ClangCompiler::process(const llvm::Module* module) const {
+void ModuleProcessor::compile() const {
     std::filesystem::create_directory(tmp_dir);
 
     std::error_code error_code;
@@ -23,13 +27,13 @@ void ClangCompiler::process(const llvm::Module* module) const {
     system(std::string(CLANG_PATH " ")
                .append(ll_file)
                .append(" -o ")
-               .append(executable)
+               .append(std::filesystem::current_path() / "a.out")
                .append(" -Wno-override-module") // For whatever reason the target triple returned by
                                                 // 'llvm::sys::getDefaultTargetTriple()' is not the one Clang actually
                                                 // expects on macOS. This option suppresses the warning.
                .c_str());
 }
 
-void Executor::process(const llvm::Module* /*module*/) const {
-    system(executable.c_str());
+int ModuleProcessor::execute() {
+    return system((std::filesystem::current_path() / "a.out").c_str());
 }

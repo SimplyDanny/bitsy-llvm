@@ -24,8 +24,9 @@ add_executable(bitsyc
     src/bitsyc.cpp
     src/ast/ASTPrinter.cpp
     src/codegen/CodeGenerator.cpp
+    src/codegen/ModuleBuilder.cpp
+    src/execution/ModuleProcessor.cpp
     src/helper/ConsolePrinter.cpp
-    src/helper/PostProcessor.cpp
     src/lexer/Token.cpp
     src/parser/Parser.cpp
 )

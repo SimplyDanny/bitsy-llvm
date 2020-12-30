@@ -4,7 +4,8 @@
 
 #include "ast/ASTPrinter.hpp"
 #include "codegen/CodeGenerator.hpp"
-#include "helper/PostProcessor.hpp"
+#include "codegen/ModuleBuilder.hpp"
+#include "execution/ModuleProcessor.hpp"
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
 
@@ -26,11 +27,10 @@ int main(int argc, char* argv[]) {
     Parser parser{tokens};
     auto main_block = parser.parse();
 
-    CodeGenerator generator{[](auto module) {
-        ClangCompiler().process(module);
-        Executor().process(module);
-    }};
-    generator.visit(static_cast<Statement*>(main_block.get()));
+    ModuleBuilder builder{main_block.get()};
 
-    return 0;
+    ModuleProcessor processor{builder.build()};
+    processor.compile();
+
+    return processor.execute();
 }

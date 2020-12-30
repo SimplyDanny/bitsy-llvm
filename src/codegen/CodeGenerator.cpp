@@ -1,5 +1,4 @@
 #include <memory>
-#include <stack>
 
 #include "llvm/IR/Function.h"
 #include "llvm/Support/Host.h"
@@ -7,30 +6,23 @@
 
 #include "codegen/CodeGenerator.hpp"
 
-static std::stack<llvm::BasicBlock*> loop_continuation_hierarchy;
-static bool had_break = false;
-
-static llvm::Value* read_template;
-static llvm::Value* print_template;
-
-static llvm::Function* main_function;
-static llvm::BasicBlock* main_block;
-
-void CodeGenerator::visit(const Program* program) {
-    read_template = builder.CreateGlobalStringPtr("%i", "read_template", 0, module.get());
-    print_template = builder.CreateGlobalStringPtr("%i\n", "print_template", 0, module.get());
+CodeGenerator::CodeGenerator(llvm::Module& module)
+    : module(module)
+    , builder(module.getContext())
+    , had_break(false)
+    , read_template(builder.CreateGlobalStringPtr("%i", "read_template", 0, &module))
+    , print_template(builder.CreateGlobalStringPtr("%i\n", "print_template", 0, &module)) {
+    module.setTargetTriple(llvm::sys::getDefaultTargetTriple());
 
     llvm::FunctionType* return_type = llvm::FunctionType::get(builder.getInt32Ty(), false);
-    main_function = llvm::Function::Create(return_type, llvm::Function::ExternalLinkage, "main", module.get());
+    main_function = llvm::Function::Create(return_type, llvm::Function::ExternalLinkage, "main", &module);
+    main_block = llvm::BasicBlock::Create(module.getContext(), "main_block", main_function);
+}
 
-    main_block = llvm::BasicBlock::Create(context, "main_block", main_function);
+void CodeGenerator::visit(const Program* program) {
     builder.SetInsertPoint(main_block);
     visit(program->block.get());
     builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
-
-    module->setTargetTriple(llvm::sys::getDefaultTargetTriple());
-
-    module_processor(module.get());
 }
 
 void CodeGenerator::visit(const Block* block) {
@@ -43,13 +35,13 @@ void CodeGenerator::visit(const Block* block) {
 }
 
 void CodeGenerator::visit(const IfStatement* if_statement) {
-    auto then_block = llvm::BasicBlock::Create(context, "then_block", main_function);
-    auto continuation_block = llvm::BasicBlock::Create(context, "continuation_block", main_function);
+    auto then_block = llvm::BasicBlock::Create(module.getContext(), "then_block", main_function);
+    auto continuation_block = llvm::BasicBlock::Create(module.getContext(), "continuation_block", main_function);
 
     auto condition = create_if_condition(if_statement);
     llvm::BasicBlock* else_block;
     if (if_statement->else_block) {
-        else_block = llvm::BasicBlock::Create(context, "else_block", main_function);
+        else_block = llvm::BasicBlock::Create(module.getContext(), "else_block", main_function);
         builder.CreateCondBr(condition, then_block, else_block);
     } else {
         builder.CreateCondBr(condition, then_block, continuation_block);
@@ -75,8 +67,8 @@ void CodeGenerator::visit(const IfStatement* if_statement) {
 }
 
 void CodeGenerator::visit(const LoopStatement* loop_statement) {
-    auto loop_block = llvm::BasicBlock::Create(context, "loop_block", main_function);
-    auto after_loop_block = llvm::BasicBlock::Create(context, "after_loop_block", main_function);
+    auto loop_block = llvm::BasicBlock::Create(module.getContext(), "loop_block", main_function);
+    auto after_loop_block = llvm::BasicBlock::Create(module.getContext(), "after_loop_block", main_function);
     loop_continuation_hierarchy.push(after_loop_block);
     builder.CreateBr(loop_block);
 
@@ -91,14 +83,14 @@ void CodeGenerator::visit(const LoopStatement* loop_statement) {
 }
 
 void CodeGenerator::visit(const PrintStatement* print_statement) {
-    auto print_function = module->getOrInsertFunction(
+    auto print_function = module.getOrInsertFunction(
         "printf", llvm::FunctionType::get(builder.getInt32Ty(), builder.getInt8PtrTy(), true));
     std::vector<llvm::Value*> arguments{print_template, visit(print_statement->expression.get())};
     builder.CreateCall(print_function, arguments, "print");
 }
 
 void CodeGenerator::visit(const ReadStatement* read_statement) {
-    auto read_function = module->getOrInsertFunction(
+    auto read_function = module.getOrInsertFunction(
         "scanf", llvm::FunctionType::get(builder.getInt32Ty(), builder.getInt8PtrTy(), true));
     auto allocated_variable = builder.CreateAlloca(builder.getInt32Ty());
     known_variables[read_statement->variable_expression->name] = allocated_variable;

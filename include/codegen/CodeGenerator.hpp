@@ -1,28 +1,33 @@
 #ifndef CODEGENERATOR_HPP
 #define CODEGENERATOR_HPP
 
+#include <map>
+#include <stack>
+
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 
 #include "ast/ASTVisitor.hpp"
-#include "helper/PostProcessor.hpp"
-
-using ModuleProcessor = std::function<void(const llvm::Module*)>;
 
 class CodeGenerator : public ASTVisitor<llvm::Value*> {
-    llvm::LLVMContext context;
-    llvm::IRBuilder<> builder;
-    std::unique_ptr<llvm::Module> module;
-    std::map<std::string, llvm::Value*> known_variables;
+    llvm::Module& module;
 
-    ModuleProcessor module_processor;
+    llvm::IRBuilder<> builder;
+
+    bool had_break;
+
+    llvm::Value* read_template;
+    llvm::Value* print_template;
+
+    llvm::Function* main_function;
+    llvm::BasicBlock* main_block;
+
+    std::map<std::string, llvm::Value*> known_variables;
+    std::stack<llvm::BasicBlock*> loop_continuation_hierarchy;
 
   public:
-    explicit CodeGenerator(ModuleProcessor module_processor)
-        : builder(context)
-        , module(std::make_unique<llvm::Module>("Bitsy Program", context))
-        , module_processor(std::move(module_processor)) {}
+    explicit CodeGenerator(llvm::Module& module);
 
     using ASTVisitor<llvm::Value*>::visit;
 
