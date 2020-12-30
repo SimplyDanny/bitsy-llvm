@@ -6,6 +6,7 @@
 #include "llvm/ExecutionEngine/MCJIT.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/Support/TargetSelect.h"
+#include "llvm/Transforms/Utils/Cloning.h"
 
 #include "execution/ModuleProcessor.hpp"
 #include "helper/ClangPath.hpp"
@@ -38,6 +39,14 @@ void ModuleProcessor::compile() const {
                .c_str());
 }
 
-int ModuleProcessor::execute() {
-    return system((std::filesystem::current_path() / "a.out").c_str());
+int ModuleProcessor::execute() const {
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmPrinter();
+
+    auto engine_module = llvm::CloneModule(*module);
+    auto main = engine_module->getFunction("main");
+    auto engine = llvm::EngineBuilder(std::move(engine_module)).create();
+    auto result = engine->runFunction(main, {});
+
+    return result.IntVal.getSExtValue();
 }

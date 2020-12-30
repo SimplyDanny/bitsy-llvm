@@ -18,7 +18,16 @@ include_directories(include ${PROJECT_BINARY_DIR}/include ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
 # Find the libraries that correspond to the LLVM components that we wish to use.
-llvm_map_components_to_libnames(llvm_libs core)
+llvm_map_components_to_libnames(
+    llvm_libs
+    Core
+    ExecutionEngine
+    Interpreter
+    MC
+    MCJIT
+    Support
+    nativecodegen
+  )
 
 add_executable(bitsyc
     src/bitsyc.cpp
