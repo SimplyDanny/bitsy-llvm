@@ -74,8 +74,9 @@ void CodeGenerator::visit(const LoopStatement* loop_statement) {
 
     builder.SetInsertPoint(loop_block);
     visit(loop_statement->block.get());
-    builder.CreateBr(loop_block);
-
+    if (!had_break || loop_continuation_hierarchy.size() != 1) {
+        builder.CreateBr(loop_block);
+    }
     loop_continuation_hierarchy.pop();
     had_break = false;
 

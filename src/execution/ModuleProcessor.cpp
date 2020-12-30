@@ -17,6 +17,10 @@ void ModuleProcessor::print() const {
     module->print(llvm::outs(), nullptr);
 }
 
+bool ModuleProcessor::verify() const {
+    return llvm::verifyModule(*module, &llvm::outs());
+}
+
 void ModuleProcessor::compile() const {
     std::filesystem::create_directory(tmp_dir);
 

@@ -14,6 +14,7 @@ class ModuleProcessor {
         : module(std::move(module)) {}
 
     void print() const;
+    [[nodiscard]] bool verify() const;
     void compile() const;
     int execute();
 };

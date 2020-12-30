@@ -30,6 +30,9 @@ int main(int argc, char* argv[]) {
     ModuleBuilder builder{main_block.get()};
 
     ModuleProcessor processor{builder.build()};
+    if (processor.verify()) {
+        return 3;
+    }
     processor.compile();
 
     return processor.execute();
