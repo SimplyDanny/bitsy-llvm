@@ -15,7 +15,7 @@ class ModuleProcessor {
 
     void print() const;
     [[nodiscard]] bool verify() const;
-    void compile() const;
+    [[nodiscard]] int compile() const;
     [[nodiscard]] int execute() const;
 };
 

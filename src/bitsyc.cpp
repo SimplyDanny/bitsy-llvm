@@ -33,7 +33,9 @@ int main(int argc, char* argv[]) {
     if (processor.verify()) {
         return 3;
     }
-    processor.compile();
+    if (processor.compile() != 0) {
+        return 4;
+    }
 
     return processor.execute();
 }
