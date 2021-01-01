@@ -1,11 +1,16 @@
 #include <filesystem>
 #include <iostream>
+#include <memory>
 
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/Support/TargetSelect.h"
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
 #include "execution/ModuleProcessor.hpp"
@@ -20,6 +25,16 @@ void ModuleProcessor::print() const {
 
 bool ModuleProcessor::verify() const {
     return llvm::verifyModule(*module, &llvm::outs());
+}
+
+void ModuleProcessor::optimize() {
+    auto manager = std::make_unique<llvm::legacy::FunctionPassManager>(module.get());
+    manager->add(llvm::createInstructionCombiningPass());
+    manager->add(llvm::createReassociatePass());
+    manager->add(llvm::createGVNPass());
+    manager->add(llvm::createCFGSimplificationPass());
+    manager->doInitialization();
+    manager->run(*module->getFunction("main"));
 }
 
 int ModuleProcessor::compile() const {

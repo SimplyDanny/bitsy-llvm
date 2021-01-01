@@ -14,6 +14,8 @@ class ModuleProcessor {
         : module(std::move(module)) {}
 
     void print() const;
+    void optimize();
+
     [[nodiscard]] bool verify() const;
     [[nodiscard]] int compile() const;
     [[nodiscard]] int execute() const;
