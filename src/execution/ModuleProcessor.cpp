@@ -11,6 +11,7 @@
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
+#include "llvm/Transforms/Utils.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
 #include <filesystem>
@@ -34,6 +35,7 @@ void ModuleProcessor::optimize() {
     manager->add(llvm::createReassociatePass());
     manager->add(llvm::createGVNPass());
     manager->add(llvm::createCFGSimplificationPass());
+    manager->add(llvm::createPromoteMemoryToRegisterPass());
     manager->doInitialization();
     manager->run(*module->getFunction("main"));
 }
