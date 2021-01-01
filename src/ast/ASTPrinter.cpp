@@ -1,7 +1,8 @@
 #include "ast/ASTPrinter.hpp"
+
 #include "helper/ConsolePrinter.hpp"
 
-void ASTPrinter::visit(const Program* program) {
+void ASTPrinter::visit(const Program *program) {
     cout << "BEGIN" << endl;
     cout << [&]() {
         visit(program->block.get());
@@ -9,13 +10,13 @@ void ASTPrinter::visit(const Program* program) {
     cout << "END" << endl;
 }
 
-void ASTPrinter::visit(const Block* block) {
-    for (const auto& statement : block->statements) {
+void ASTPrinter::visit(const Block *block) {
+    for (const auto &statement : block->statements) {
         visit(statement.get());
     }
 }
 
-void ASTPrinter::visit(const IfStatement* if_statement) {
+void ASTPrinter::visit(const IfStatement *if_statement) {
     cout << "IF<" << if_statement->type << "> ";
     ASTVisitor::visit(if_statement->expression.get());
     cout << endl;
@@ -31,7 +32,7 @@ void ASTPrinter::visit(const IfStatement* if_statement) {
     cout << "END" << endl;
 }
 
-void ASTPrinter::visit(const LoopStatement* loop_statement) {
+void ASTPrinter::visit(const LoopStatement *loop_statement) {
     cout << "LOOP" << endl;
     cout << [&]() {
         visit(loop_statement->block.get());
@@ -39,38 +40,38 @@ void ASTPrinter::visit(const LoopStatement* loop_statement) {
     cout << "END" << endl;
 }
 
-void ASTPrinter::visit(const PrintStatement* print_statement) {
+void ASTPrinter::visit(const PrintStatement *print_statement) {
     cout << "PRINT ";
     visit(print_statement->expression.get());
     cout << endl;
 }
 
-void ASTPrinter::visit(const ReadStatement* read_statement) {
+void ASTPrinter::visit(const ReadStatement *read_statement) {
     cout << "READ ";
     visit(read_statement->variable_expression.get());
     cout << endl;
 }
 
-void ASTPrinter::visit(const AssignmentStatement* assignment_statement) {
+void ASTPrinter::visit(const AssignmentStatement *assignment_statement) {
     visit(assignment_statement->variable.get());
     cout << " = ";
     visit(assignment_statement->expression.get());
     cout << endl;
 }
 
-void ASTPrinter::visit(const BreakStatement* /*break_statement*/) {
+void ASTPrinter::visit(const BreakStatement * /*break_statement*/) {
     cout << "BREAK" << endl;
 }
 
-void ASTPrinter::visit(const NumberExpression* number_expression) {
+void ASTPrinter::visit(const NumberExpression *number_expression) {
     cout << number_expression->value;
 }
 
-void ASTPrinter::visit(const VariableExpression* variable_expression) {
+void ASTPrinter::visit(const VariableExpression *variable_expression) {
     cout << variable_expression->name;
 }
 
-void ASTPrinter::visit(const BinaryOperationExpression* binary_operation_expression) {
+void ASTPrinter::visit(const BinaryOperationExpression *binary_operation_expression) {
     cout << "(";
     visit(binary_operation_expression->left_expression.get());
     cout << " " << binary_operation_expression->operator_symbol << " ";

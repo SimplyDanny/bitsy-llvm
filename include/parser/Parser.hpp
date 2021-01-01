@@ -1,21 +1,21 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
-#include <memory>
-#include <vector>
-
 #include "ast/Statement.hpp"
 #include "lexer/Token.hpp"
+
+#include <memory>
+#include <vector>
 
 class Parser {
     std::vector<Token>::iterator token;
 
   public:
-    explicit Parser(std::vector<Token>& tokens);
+    explicit Parser(std::vector<Token> &tokens);
     std::unique_ptr<Program> parse();
 
   private:
-    const Token* advance();
+    const Token *advance();
     std::unique_ptr<Expression> parse_expression();
     std::unique_ptr<Expression> parse_single_expression_component();
     std::unique_ptr<Expression> parse_parenthesis_expression();

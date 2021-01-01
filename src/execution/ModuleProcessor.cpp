@@ -1,6 +1,6 @@
-#include <filesystem>
-#include <iostream>
-#include <memory>
+#include "execution/ModuleProcessor.hpp"
+
+#include "helper/ClangPath.hpp"
 
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
@@ -13,8 +13,9 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
-#include "execution/ModuleProcessor.hpp"
-#include "helper/ClangPath.hpp"
+#include <filesystem>
+#include <iostream>
+#include <memory>
 
 const static auto tmp_dir = std::filesystem::temp_directory_path() / "bitsyc";
 const static auto ll_file = tmp_dir / "tmp.ll";

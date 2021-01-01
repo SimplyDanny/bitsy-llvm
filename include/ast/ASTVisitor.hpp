@@ -1,38 +1,38 @@
 #ifndef ASTVISITOR_HPP
 #define ASTVISITOR_HPP
 
-#include <stdexcept>
-
 #include "ast/Expression.hpp"
 #include "ast/Statement.hpp"
+
+#include <stdexcept>
 
 template <class ExpressionReturnType>
 class ASTVisitor {
 
   public:
-    void visit(const Statement* statement);
+    void visit(const Statement *statement);
 
   protected:
-    virtual void visit(const Program* program) = 0;
-    virtual void visit(const Block* block) = 0;
-    virtual void visit(const IfStatement* if_statement) = 0;
-    virtual void visit(const LoopStatement* loop_statement) = 0;
-    virtual void visit(const PrintStatement* print_statement) = 0;
-    virtual void visit(const ReadStatement* read_statement) = 0;
-    virtual void visit(const AssignmentStatement* assignment_statement) = 0;
-    virtual void visit(const BreakStatement* break_statement) = 0;
+    virtual void visit(const Program *program) = 0;
+    virtual void visit(const Block *block) = 0;
+    virtual void visit(const IfStatement *if_statement) = 0;
+    virtual void visit(const LoopStatement *loop_statement) = 0;
+    virtual void visit(const PrintStatement *print_statement) = 0;
+    virtual void visit(const ReadStatement *read_statement) = 0;
+    virtual void visit(const AssignmentStatement *assignment_statement) = 0;
+    virtual void visit(const BreakStatement *break_statement) = 0;
 
   public:
-    ExpressionReturnType visit(const Expression* expression);
+    ExpressionReturnType visit(const Expression *expression);
 
   protected:
-    virtual ExpressionReturnType visit(const NumberExpression* number_expression) = 0;
-    virtual ExpressionReturnType visit(const VariableExpression* variable_expression) = 0;
-    virtual ExpressionReturnType visit(const BinaryOperationExpression* binary_operation_expression) = 0;
+    virtual ExpressionReturnType visit(const NumberExpression *number_expression) = 0;
+    virtual ExpressionReturnType visit(const VariableExpression *variable_expression) = 0;
+    virtual ExpressionReturnType visit(const BinaryOperationExpression *binary_operation_expression) = 0;
 };
 
 template <class ExpressionReturnType>
-void ASTVisitor<ExpressionReturnType>::visit(const Statement* statement) {
+void ASTVisitor<ExpressionReturnType>::visit(const Statement *statement) {
     if (auto program = llvm::dyn_cast<Program>(statement)) {
         visit(program);
     } else if (auto block = llvm::dyn_cast<Block>(statement)) {
@@ -55,7 +55,7 @@ void ASTVisitor<ExpressionReturnType>::visit(const Statement* statement) {
 }
 
 template <class ExpressionReturnType>
-ExpressionReturnType ASTVisitor<ExpressionReturnType>::visit(const Expression* expression) {
+ExpressionReturnType ASTVisitor<ExpressionReturnType>::visit(const Expression *expression) {
     if (auto number_expression = llvm::dyn_cast<NumberExpression>(expression)) {
         return visit(number_expression);
     }

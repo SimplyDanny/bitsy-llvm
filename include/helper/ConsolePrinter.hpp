@@ -7,7 +7,7 @@
 
 class ConsolePrinter {
     using NestedPrinter = std::function<void()>;
-    using EndlPrinter = std::function<void(ConsolePrinter&)>;
+    using EndlPrinter = std::function<void(ConsolePrinter &)>;
 
     template <class T>
     static constexpr bool is_printer = std::is_convertible_v<T, NestedPrinter> || std::is_convertible_v<T, EndlPrinter>;
@@ -17,15 +17,15 @@ class ConsolePrinter {
 
   public:
     template <class T, std::enable_if_t<!ConsolePrinter::is_printer<T>, bool> = true>
-    ConsolePrinter& operator<<(T output);
-    ConsolePrinter& operator<<(const NestedPrinter& nested_printer);
-    ConsolePrinter& operator<<(const EndlPrinter& endl_printer);
+    ConsolePrinter &operator<<(T output);
+    ConsolePrinter &operator<<(const NestedPrinter &nested_printer);
+    ConsolePrinter &operator<<(const EndlPrinter &endl_printer);
 
-    friend void endl(ConsolePrinter& printer);
+    friend void endl(ConsolePrinter &printer);
 };
 
 template <class T, std::enable_if_t<!ConsolePrinter::is_printer<T>, bool>>
-ConsolePrinter& ConsolePrinter::operator<<(const T output) {
+ConsolePrinter &ConsolePrinter::operator<<(const T output) {
     if (last_was_endl) {
         std::cout << std::string(2 * indent, ' ');
     }
@@ -34,7 +34,7 @@ ConsolePrinter& ConsolePrinter::operator<<(const T output) {
     return *this;
 };
 
-void endl(ConsolePrinter& printer);
+void endl(ConsolePrinter &printer);
 
 extern ConsolePrinter cout;
 

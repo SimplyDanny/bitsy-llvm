@@ -1,16 +1,16 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
+#include "lexer/Token.hpp"
+
+#include "llvm/ADT/StringSwitch.h"
+
 #include <functional>
 #include <iterator>
 #include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
-
-#include "llvm/ADT/StringSwitch.h"
-
-#include "lexer/Token.hpp"
 
 using TokenMatcher = std::function<bool(char)>;
 
@@ -30,14 +30,14 @@ class Lexer : public std::iterator<std::input_iterator_tag, Token> {
     Lexer() = default;
 
     Token operator*() const;
-    Token& operator++();
+    Token &operator++();
     Token operator++(int);
-    bool operator==(const Lexer& other) const;
-    bool operator!=(const Lexer& other) const;
+    bool operator==(const Lexer &other) const;
+    bool operator!=(const Lexer &other) const;
 
   private:
     std::optional<Token> next();
-    std::string get_while_matching(const TokenMatcher& matcher);
+    std::string get_while_matching(const TokenMatcher &matcher);
 
     static bool is_operator(char c);
     static bool is_identifier(char c);
@@ -45,8 +45,8 @@ class Lexer : public std::iterator<std::input_iterator_tag, Token> {
 
 template <class InputIterator>
 Lexer<InputIterator>::Lexer(InputIterator begin, InputIterator end)
-    : current_character(begin)
-    , characters_end(end) {
+  : current_character(begin)
+  , characters_end(end) {
     if (current_character != characters_end) {
         ++(*this);
     }
@@ -58,7 +58,7 @@ Token Lexer<InputIterator>::operator*() const {
 }
 
 template <class InputIterator>
-Token& Lexer<InputIterator>::operator++() {
+Token &Lexer<InputIterator>::operator++() {
     return *(current_token = next());
 }
 
@@ -70,12 +70,12 @@ Token Lexer<InputIterator>::operator++(int) {
 }
 
 template <class InputIterator>
-bool Lexer<InputIterator>::operator==(const Lexer& other) const {
+bool Lexer<InputIterator>::operator==(const Lexer &other) const {
     return current_token.has_value() == other.current_token.has_value();
 }
 
 template <class InputIterator>
-bool Lexer<InputIterator>::operator!=(const Lexer& other) const {
+bool Lexer<InputIterator>::operator!=(const Lexer &other) const {
     return !(*this == other);
 }
 
@@ -119,7 +119,7 @@ std::optional<Token> Lexer<InputIterator>::next() {
 }
 
 template <class InputIterator>
-std::string Lexer<InputIterator>::get_while_matching(const TokenMatcher& matcher) {
+std::string Lexer<InputIterator>::get_while_matching(const TokenMatcher &matcher) {
     std::string value;
     do {
         value += *current_character++;

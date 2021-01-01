@@ -1,7 +1,3 @@
-#include <fstream>
-#include <iostream>
-#include <iterator>
-
 #include "ast/ASTPrinter.hpp"
 #include "codegen/CodeGenerator.hpp"
 #include "codegen/ModuleBuilder.hpp"
@@ -9,7 +5,11 @@
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
 
-int main(int argc, char* argv[]) {
+#include <fstream>
+#include <iostream>
+#include <iterator>
+
+int main(int argc, char *argv[]) {
     if (argc != 2) {
         std::cerr << "Call the program with exactly one argument which is a path to a '.bitsy' file." << std::endl;
         return 1;

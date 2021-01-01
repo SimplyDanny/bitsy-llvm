@@ -1,7 +1,7 @@
+#include "parser/Parser.hpp"
+
 #include <iostream>
 #include <stdexcept>
-
-#include "parser/Parser.hpp"
 
 static IfStatementType get_if_type_from_token_type(const TokenType token_type) {
     switch (token_type) {
@@ -30,8 +30,8 @@ static int get_operator_precedence(char operator_token) {
     }
 }
 
-Parser::Parser(std::vector<Token>& tokens)
-    : token(tokens.begin()) {
+Parser::Parser(std::vector<Token> &tokens)
+  : token(tokens.begin()) {
     if (token == tokens.end()) {
         throw std::logic_error("Got an invalid Bitsy program.");
     }
@@ -117,7 +117,8 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
                 return nullptr;
             }
         }
-        left_expression = std::make_unique<BinaryOperationExpression>(operator_token, std::move(left_expression),
+        left_expression = std::make_unique<BinaryOperationExpression>(operator_token,
+                                                                      std::move(left_expression),
                                                                       std::move(right_expression));
     }
 }
@@ -131,7 +132,9 @@ std::unique_ptr<Statement> Parser::parse_statement() {
             auto expression = parse_expression();
             auto then_block = parse_block(t_else);
             auto else_block = token->type == t_else ? parse_block() : nullptr;
-            return std::make_unique<IfStatement>(type, std::move(expression), std::move(then_block),
+            return std::make_unique<IfStatement>(type,
+                                                 std::move(expression),
+                                                 std::move(then_block),
                                                  std::move(else_block));
         }
         case t_loop:
