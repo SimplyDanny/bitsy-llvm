@@ -3,33 +3,6 @@
 #include <iostream>
 #include <stdexcept>
 
-static IfStatementType get_if_type_from_token_type(const TokenType token_type) {
-    switch (token_type) {
-        case t_ifz:
-            return zero;
-        case t_ifp:
-            return positive;
-        case t_ifn:
-            return negative;
-        default:
-            throw std::invalid_argument("No valid if-statement type for given token type.");
-    }
-}
-
-static int get_operator_precedence(char operator_token) {
-    switch (operator_token) {
-        case '+':
-        case '-':
-            return 100;
-        case '*':
-        case '/':
-        case '%':
-            return 200;
-        default:
-            return -1;
-    }
-}
-
 Parser::Parser(std::vector<Token> &tokens)
   : token(tokens.begin()) {
     if (token == tokens.end()) {
@@ -94,6 +67,20 @@ std::unique_ptr<Expression> Parser::parse_parenthesis_expression() {
     throw std::logic_error("Expression inside of parentheses cannot be parsed.");
 }
 
+static int get_operator_precedence(char operator_token) {
+    switch (operator_token) {
+        case '+':
+        case '-':
+            return 100;
+        case '*':
+        case '/':
+        case '%':
+            return 200;
+        default:
+            return -1;
+    }
+}
+
 std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
                                                             std::unique_ptr<Expression> left_expression) {
     while (true) {
@@ -120,6 +107,19 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
         left_expression = std::make_unique<BinaryOperationExpression>(operator_token,
                                                                       std::move(left_expression),
                                                                       std::move(right_expression));
+    }
+}
+
+static IfStatementType get_if_type_from_token_type(const TokenType token_type) {
+    switch (token_type) {
+        case t_ifz:
+            return zero;
+        case t_ifp:
+            return positive;
+        case t_ifn:
+            return negative;
+        default:
+            throw std::invalid_argument("No valid if-statement type for given token type.");
     }
 }
 
