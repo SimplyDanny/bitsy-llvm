@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-enum IfStatementType { zero, positive, negative };
+enum IfStatementType : char { zero = 'Z', positive = 'P', negative = 'N' };
 
 enum StatementKind { s_block, s_program, s_if, s_loop, s_print, s_read, s_assignment, s_break };
 

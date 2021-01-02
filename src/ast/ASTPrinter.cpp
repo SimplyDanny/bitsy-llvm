@@ -17,7 +17,7 @@ void ASTPrinter::visit(const Block *block) {
 }
 
 void ASTPrinter::visit(const IfStatement *if_statement) {
-    cout << "IF<" << if_statement->type << "> ";
+    cout << "IF" << if_statement->type << " ";
     ASTVisitor::visit(if_statement->expression.get());
     cout << endl;
     cout << [&]() {
