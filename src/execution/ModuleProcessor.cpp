@@ -30,14 +30,15 @@ bool ModuleProcessor::verify() const {
 }
 
 void ModuleProcessor::optimize() {
-    auto manager = std::make_unique<llvm::legacy::FunctionPassManager>(module.get());
-    manager->add(llvm::createInstructionCombiningPass());
-    manager->add(llvm::createReassociatePass());
-    manager->add(llvm::createGVNPass());
-    manager->add(llvm::createCFGSimplificationPass());
-    manager->add(llvm::createPromoteMemoryToRegisterPass());
-    manager->doInitialization();
-    manager->run(*module->getFunction("main"));
+    llvm::legacy::FunctionPassManager manager{module.get()};
+    manager.add(llvm::createInstructionCombiningPass());
+    manager.add(llvm::createReassociatePass());
+    manager.add(llvm::createGVNPass());
+    manager.add(llvm::createCFGSimplificationPass());
+    manager.add(llvm::createPromoteMemoryToRegisterPass());
+    manager.doInitialization();
+    manager.run(*module->getFunction("main"));
+    manager.doFinalization();
 }
 
 int ModuleProcessor::compile() const {
