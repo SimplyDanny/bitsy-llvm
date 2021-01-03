@@ -7,6 +7,7 @@
 #include "llvm/ExecutionEngine/MCJIT.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/Support/Program.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
@@ -52,14 +53,18 @@ int ModuleProcessor::compile() const {
     }
     module->print(file_stream, nullptr);
 
-    return system(std::string(CLANG_PATH " ")
-                      .append(ll_file)
-                      .append(" -o ")
-                      .append(std::filesystem::current_path() / "a.out")
-                      .append(" -Wno-override-module") // For whatever reason the target triple returned by
-                                                       // 'llvm::sys::getDefaultTargetTriple()' is not the one Clang
-                                                       // actually expects on macOS. This option suppresses the warning.
-                      .c_str());
+    auto out_file = std::filesystem::current_path() / "a.out";
+    llvm::ArrayRef<llvm::StringRef> arguments{
+        CLANG_PATH,
+        ll_file.c_str(),
+        "-o",
+        out_file.c_str(),
+        "-Wno-override-module" // For whatever reason the target triple returned by
+                               // 'llvm::sys::getDefaultTargetTriple()' is not the one Clang
+                               // actually expects on macOS. This option
+                               // suppresses the warning.
+    };
+    return llvm::sys::ExecuteAndWait(CLANG_PATH, arguments);
 }
 
 int ModuleProcessor::execute() const {
