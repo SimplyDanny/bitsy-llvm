@@ -18,6 +18,7 @@ class ModuleProcessor {
     void print() const;
     void optimize();
 
+    [[nodiscard]] bool show_cfg() const;
     [[nodiscard]] bool verify() const;
     [[nodiscard]] int compile() const;
     [[nodiscard]] int execute() const;

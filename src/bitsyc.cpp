@@ -26,6 +26,7 @@ cl::opt<std::string> output_name{"o",
 cl::opt<bool> compile{"c", cl::desc("Compile Bitsy file to an exectuable output file"), cl::cat(category)};
 cl::opt<bool> quiet{"q", cl::desc("Do not execute the program automatically"), cl::cat(category)};
 cl::opt<bool> no_optimization{"no-opt", cl::desc("Do not run any optimization"), cl::cat(category)};
+cl::opt<bool> show_cfg{"show-cfg", cl::desc("Show CFG or create an image of it"), cl::cat(category)};
 
 }} // namespace ::opt
 
@@ -57,6 +58,11 @@ int main(int argc, char *argv[]) {
     if (opt::compile) {
         if (processor.compile() != 0) {
             return 3;
+        }
+    }
+    if (opt::show_cfg) {
+        if (processor.show_cfg()) {
+            return 4;
         }
     }
     if (!opt::quiet) {

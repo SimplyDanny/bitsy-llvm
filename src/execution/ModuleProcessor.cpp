@@ -2,11 +2,13 @@
 
 #include "helper/ClangPath.hpp"
 
+#include "llvm/Analysis/CFGPrinter.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/Support/GraphWriter.h"
 #include "llvm/Support/Program.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Transforms/InstCombine/InstCombine.h"
@@ -21,9 +23,40 @@
 
 const static auto tmp_dir = std::filesystem::temp_directory_path() / "bitsyc";
 const static auto ll_file = tmp_dir / "tmp.ll";
+const static auto dot_file = tmp_dir / "tmp.dot";
 
 void ModuleProcessor::print() const {
     module->print(llvm::outs(), nullptr);
+}
+
+bool ModuleProcessor::show_cfg() const {
+    llvm::DOTFuncInfo cfg_info{module->getFunction("main")};
+    llvm::WriteGraph(&cfg_info, "", false, "", dot_file);
+
+    auto dot_program = llvm::sys::findProgramByName("dot");
+    if (!dot_program) {
+        std::cerr << "The 'dot' program cannot be found in your PATH." << std::endl;
+        return false;
+    }
+    auto png_file = std::filesystem::current_path() / (output_name + ".png");
+    llvm::ArrayRef<llvm::StringRef> dot_arguments{*dot_program, "-Tpng", "-o", png_file.c_str(), dot_file.c_str()};
+    if (llvm::sys::ExecuteAndWait(*dot_program, dot_arguments) != 0) {
+        std::cerr << "Error converting DOT file to PNG file." << std::endl;
+        return false;
+    }
+    std::cout << "PNG file " << png_file << " generated." << std::endl;
+
+#if defined(__APPLE__)
+    std::cout << "Opening it ..." << std::endl;
+    auto open_program = llvm::sys::findProgramByName("open");
+    llvm::ArrayRef<llvm::StringRef> open_arguments{*open_program, png_file.c_str()};
+    if (llvm::sys::ExecuteAndWait(*open_program, open_arguments) != 0) {
+        std::cerr << "Error opening PNG file." << std::endl;
+        return false;
+    }
+#endif
+
+    return true;
 }
 
 bool ModuleProcessor::verify() const {
