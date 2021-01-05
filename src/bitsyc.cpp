@@ -5,20 +5,38 @@
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
 
+#include "llvm/Support/CommandLine.h"
+
 #include <fstream>
 #include <iostream>
 #include <iterator>
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        std::cerr << "Call the program with exactly one argument which is a path to a '.bitsy' file." << std::endl;
-        return 1;
-    }
+namespace cl = llvm::cl;
 
-    std::ifstream file_stream{argv[1]};
+namespace { namespace opt {
+
+cl::OptionCategory category{"Options"};
+
+cl::opt<std::string> input_name{cl::Positional, cl::Required, cl::desc("<bitsy file>"), cl::cat(category)};
+cl::opt<std::string> output_name{"o",
+                                 cl::desc("Name of the executable output file"),
+                                 cl::value_desc("executable"),
+                                 cl::init("a.out"),
+                                 cl::cat(category)};
+cl::opt<bool> compile{"c", cl::desc("Compile Bitsy file to an exectuable output file"), cl::cat(category)};
+cl::opt<bool> quiet{"q", cl::desc("Do not execute the program automatically"), cl::cat(category)};
+cl::opt<bool> no_optimization{"no-opt", cl::desc("Do not run any optimization"), cl::cat(category)};
+
+}} // namespace ::opt
+
+int main(int argc, char *argv[]) {
+    cl::HideUnrelatedOptions(opt::category);
+    cl::ParseCommandLineOptions(argc, argv, "Compiler for Bitsy programs", nullptr, nullptr, true);
+
+    std::ifstream file_stream{opt::input_name};
     if (!file_stream.good()) {
         std::cerr << "Cannot open the input file." << std::endl;
-        return 2;
+        return 1;
     }
 
     Lexer<std::istreambuf_iterator<char>> lexer{file_stream, {}};
@@ -29,14 +47,20 @@ int main(int argc, char *argv[]) {
 
     ModuleBuilder builder{main_block.get()};
 
-    ModuleProcessor processor{builder.build()};
+    ModuleProcessor processor{builder.build(), opt::output_name};
     if (processor.verify()) {
-        return 3;
+        return 2;
     }
-    processor.optimize();
-    if (processor.compile() != 0) {
-        return 4;
+    if (!opt::no_optimization) {
+        processor.optimize();
     }
-
-    return processor.execute();
+    if (opt::compile) {
+        if (processor.compile() != 0) {
+            return 3;
+        }
+    }
+    if (!opt::quiet) {
+        return processor.execute();
+    }
+    return 0;
 }

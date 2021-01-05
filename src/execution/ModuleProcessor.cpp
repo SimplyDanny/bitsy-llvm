@@ -53,7 +53,7 @@ int ModuleProcessor::compile() const {
     }
     module->print(file_stream, nullptr);
 
-    auto out_file = std::filesystem::current_path() / "a.out";
+    auto out_file = std::filesystem::current_path() / output_name;
     std::vector<llvm::StringRef> arguments{
         CLANG_PATH,
         ll_file.c_str(),

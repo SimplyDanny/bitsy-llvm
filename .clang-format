@@ -10,6 +10,7 @@ BinPackParameters: false
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 ColumnLimit: 120
+CompactNamespaces: true
 ConstructorInitializerIndentWidth: 2
 IncludeBlocks: Regroup
 IndentCaseLabels: true

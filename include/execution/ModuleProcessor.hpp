@@ -8,10 +8,12 @@
 class ModuleProcessor {
 
     std::unique_ptr<llvm::Module> module;
+    std::string output_name;
 
   public:
-    ModuleProcessor(std::unique_ptr<llvm::Module> module)
-      : module(std::move(module)) {}
+    ModuleProcessor(std::unique_ptr<llvm::Module> module, std::string output_name)
+      : module(std::move(module))
+      , output_name(std::move(output_name)) {}
 
     void print() const;
     void optimize();
