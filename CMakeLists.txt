@@ -27,9 +27,10 @@ llvm_map_components_to_libnames(
     MCJIT
     Support
     nativecodegen
-  )
+)
 
-add_executable(bitsyc
+add_executable(
+    bitsyc
     src/bitsyc.cpp
     src/ast/ASTPrinter.cpp
     src/codegen/CodeGenerator.cpp
@@ -39,6 +40,8 @@ add_executable(bitsyc
     src/lexer/Token.cpp
     src/parser/Parser.cpp
 )
+
+set_target_properties(bitsyc PROPERTIES VISIBILITY_INLINES_HIDDEN true)
 
 # Link against LLVM libraries.
 target_link_libraries(bitsyc ${llvm_libs})
