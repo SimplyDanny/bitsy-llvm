@@ -24,11 +24,12 @@ and run CMake like:
 
 Make sure that there is an installation of LLVM on your system. Although not
 strictly necessary, it is recommended to use the Clang compiler bundled with the
-LLVM installation to build bitsyc. Since the same compiler is also used at
-runtime, bitsyc may otherwise not be usable. CMake needs to find the LLVM
-configuration (`LLVM_DIR`). In case you do not use your system's default
-compiler, make sure that the values of `CMAKE_C_COMPILER` and
-`CMAKE_CXX_COMPILER` can be found in the `PATH` or use absolute paths.
+LLVM installation to build bitsyc. The same compiler may be used at runtime if
+bitsyc is asked to produce an executable of a given Bitsy program instead of
+executing it just-in-time. CMake needs to find the LLVM configuration
+(`LLVM_DIR`). In case you do not use your system's default compiler, make sure
+that the values of `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be found in
+the `PATH` or use absolute paths.
 
 Finally, build bitsyc with the build tool (Make, Ninja, ...) CMake has chosen or
 which you specified in the `cmake` call above with the `-G` argument. Depending
@@ -37,10 +38,10 @@ typically (for Make, Ninja, ...) it is `build/bitsyc`.
 
 ## Usage
 
-The compiler bitsyc requires one argument, namely the path to a `.bitsy` file
-containing a Bitsy program. It will parse it, generate LLVM IR for it, pass this
-intermediate code to the Clang compiler and execute the built binary. All files
-generated will be put into a temporary directory on your system.
+The compiler bitsyc accepts some command line options. They can be displayed by
+`bitsyc --help`. By default the compiler executes the given Bitsy program
+directly and prints its output to standard output. All intermediate files will
+be put into a temporary directory on your system.
 
 You may pass the path to bitsyc to the `runspec` script in the
 [Bitsy](https://github.com/apbendi/bitsyspec) repository to run all its
