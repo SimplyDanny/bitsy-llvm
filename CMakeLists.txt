@@ -10,7 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+message(STATUS "Using LLVMConfig.cmake in '${LLVM_DIR}'")
 
 configure_file(include/helper/ClangPath.hpp.in include/helper/ClangPath.hpp)
 
@@ -42,6 +42,11 @@ add_executable(
 )
 
 set_target_properties(bitsyc PROPERTIES VISIBILITY_INLINES_HIDDEN true)
+
+if(NOT LLVM_ENABLE_RTTI)
+    message(STATUS "Building without RTTI")
+    target_compile_options(bitsyc PRIVATE -fno-rtti)
+endif()
 
 # Link against LLVM libraries.
 target_link_libraries(bitsyc ${llvm_libs})
