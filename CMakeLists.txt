@@ -19,13 +19,9 @@ add_definitions(${LLVM_DEFINITIONS})
 
 # Find the libraries that correspond to the LLVM components that we wish to use.
 llvm_map_components_to_libnames(
-    llvm_libs
+    BITSYC_LLVM_LIBRARIES
     Core
-    ExecutionEngine
-    Interpreter
-    MC
     MCJIT
-    Support
     nativecodegen
 )
 
@@ -49,4 +45,4 @@ if(NOT LLVM_ENABLE_RTTI)
 endif()
 
 # Link against LLVM libraries.
-target_link_libraries(bitsyc ${llvm_libs})
+target_link_libraries(bitsyc ${BITSYC_LLVM_LIBRARIES})
