@@ -120,7 +120,10 @@ std::unique_ptr<Statement> Parser::parse_statement() {
         case t_print:
             return std::make_unique<PrintStatement>(parse_expression());
         case t_read: {
-            auto variable_expression = std::make_unique<VariableExpression>((++token)->value);
+            if ((++token)->type != t_variable) {
+                throw std::logic_error("Expecting a variable as the argument of a 'READ' statement.");
+            }
+            auto variable_expression = std::make_unique<VariableExpression>(token->value);
             return std::make_unique<ReadStatement>(std::move(variable_expression));
         }
         case t_break:
