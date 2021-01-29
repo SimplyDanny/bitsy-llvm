@@ -1,5 +1,7 @@
 #include "parser/Parser.hpp"
 
+#include "llvm/ADT/StringSwitch.h"
+
 #include <iostream>
 #include <stdexcept>
 
@@ -25,7 +27,7 @@ std::unique_ptr<Block> Parser::parse_block(const TokenType additional_stop_token
     std::vector<std::unique_ptr<Statement>> statements;
     while ((++token)->type != t_end && token->type != additional_stop_token) {
         statements.push_back(parse_statement());
-    };
+    }
     return std::make_unique<Block>(std::move(statements));
 }
 
@@ -67,18 +69,13 @@ std::unique_ptr<Expression> Parser::parse_parenthesis_expression() {
     throw std::logic_error("Expression inside of parentheses cannot be parsed.");
 }
 
-static int get_operator_precedence(char operator_token) {
-    switch (operator_token) {
-        case '+':
-        case '-':
-            return 100;
-        case '*':
-        case '/':
-        case '%':
-            return 200;
-        default:
-            return -1;
-    }
+static int get_operator_precedence(const std::string &operator_token) {
+    // clang-format off
+    return llvm::StringSwitch<int>(operator_token)
+               .Cases("+", "-", 100)
+               .Cases("*", "/", "%", 200)
+               .Default(-1);
+    // clang-format on
 }
 
 std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
@@ -87,7 +84,7 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
         if ((token + 1)->type != t_operator) {
             return left_expression;
         }
-        char operator_token = (token + 1)->value[0];
+        auto operator_token = (token + 1)->value;
         int operator_precedence = get_operator_precedence(operator_token);
         if (operator_precedence < precedence) {
             return left_expression;
@@ -97,14 +94,14 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
         if (!right_expression) {
             throw std::logic_error("Unable to parse right hand side expression.");
         }
-        int next_operator_precedence = get_operator_precedence((token + 1)->value[0]);
+        int next_operator_precedence = get_operator_precedence((token + 1)->value);
         if (operator_precedence < next_operator_precedence) {
             right_expression = parse_binary_expression(operator_precedence + 1, std::move(right_expression));
             if (!right_expression) {
                 return nullptr;
             }
         }
-        left_expression = std::make_unique<BinaryOperationExpression>(operator_token,
+        left_expression = std::make_unique<BinaryOperationExpression>(operator_token[0],
                                                                       std::move(left_expression),
                                                                       std::move(right_expression));
     }
