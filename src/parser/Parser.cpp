@@ -110,33 +110,14 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
     }
 }
 
-static IfStatementType get_if_type_from_token_type(const TokenType token_type) {
-    switch (token_type) {
-        case t_ifz:
-            return zero;
-        case t_ifp:
-            return positive;
-        case t_ifn:
-            return negative;
-        default:
-            throw std::invalid_argument("No valid if-statement type for given token type.");
-    }
-}
-
 std::unique_ptr<Statement> Parser::parse_statement() {
     switch (token->type) {
         case t_ifn:
+            return parse_if_statement(negative);
         case t_ifp:
-        case t_ifz: {
-            auto type = get_if_type_from_token_type(token->type);
-            auto expression = parse_expression();
-            auto then_block = parse_block(t_else);
-            auto else_block = token->type == t_else ? parse_block() : nullptr;
-            return std::make_unique<IfStatement>(type,
-                                                 std::move(expression),
-                                                 std::move(then_block),
-                                                 std::move(else_block));
-        }
+            return parse_if_statement(positive);
+        case t_ifz:
+            return parse_if_statement(zero);
         case t_loop:
             return std::make_unique<LoopStatement>(parse_block());
         case t_print:
@@ -158,4 +139,11 @@ std::unique_ptr<Statement> Parser::parse_statement() {
         default:
             throw std::logic_error("Unknown token type.");
     }
+}
+
+std::unique_ptr<Statement> Parser::parse_if_statement(const IfStatementType type) {
+    auto expression = parse_expression();
+    auto then_block = parse_block(t_else);
+    auto else_block = token->type == t_else ? parse_block() : nullptr;
+    return std::make_unique<IfStatement>(type, std::move(expression), std::move(then_block), std::move(else_block));
 }

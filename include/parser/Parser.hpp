@@ -22,6 +22,7 @@ class Parser {
     std::unique_ptr<Expression> parse_binary_expression(int precedence, std::unique_ptr<Expression> left_expression);
     std::unique_ptr<Block> parse_block(TokenType additional_stop_token = t_end);
     std::unique_ptr<Statement> parse_statement();
+    std::unique_ptr<Statement> parse_if_statement(IfStatementType type);
 };
 
 #endif
