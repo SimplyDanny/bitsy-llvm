@@ -7,7 +7,7 @@
             "name": "Debug",
             "program": "${workspaceFolder}/build/bitsyc",
             "args": [
-                "${workspaceFolder}/examples/simple.bitsy"
+                "${workspaceFolder}/../bitsyspec/specs/primes.bitsy"
             ],
             "cwd": "${workspaceFolder}/build"
         }
