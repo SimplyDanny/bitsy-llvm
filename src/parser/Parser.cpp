@@ -144,6 +144,6 @@ std::unique_ptr<Statement> Parser::parse_statement() {
 std::unique_ptr<Statement> Parser::parse_if_statement(const IfStatementType type) {
     auto expression = parse_expression();
     auto then_block = parse_block(t_else);
-    auto else_block = token->type == t_else ? parse_block() : nullptr;
+    auto else_block = token->type == t_else ? std::move(parse_block()) : nullptr;
     return std::make_unique<IfStatement>(type, std::move(expression), std::move(then_block), std::move(else_block));
 }
