@@ -30,6 +30,8 @@ void ModuleProcessor::print() const {
 }
 
 bool ModuleProcessor::show_cfg() const {
+    std::filesystem::create_directory(tmp_dir);
+
     llvm::DOTFuncInfo cfg_info{module->getFunction("main")};
     llvm::WriteGraph(&cfg_info, "", false, "", dot_file);
 
