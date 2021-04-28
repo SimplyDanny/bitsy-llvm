@@ -33,7 +33,6 @@ add_executable(
     src/codegen/ModuleBuilder.cpp
     src/execution/ModuleProcessor.cpp
     src/helper/ConsolePrinter.cpp
-    src/lexer/Token.cpp
     src/parser/Parser.cpp
 )
 
