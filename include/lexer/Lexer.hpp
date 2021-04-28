@@ -85,29 +85,29 @@ std::optional<Token> Lexer<InputIterator>::next() {
         if (isspace(*current_character) != 0) {
             ++current_character;
         } else if (isdigit(*current_character) != 0) {
-            return Token(t_number, get_while_matching(isdigit));
+            return Token(TokenType::number_t, get_while_matching(isdigit));
         } else if (is_operator(*current_character)) {
-            return Token(t_operator, get_while_matching(is_operator));
+            return Token(TokenType::operator_t, get_while_matching(is_operator));
         } else if (*current_character == '=') {
-            return Token(t_assignment, *current_character++);
+            return Token(TokenType::assignment_t, *current_character++);
         } else if (*current_character == '(') {
-            return Token(t_left_parenthesis, *current_character++);
+            return Token(TokenType::left_parenthesis_t, *current_character++);
         } else if (*current_character == ')') {
-            return Token(t_right_parenthesis, *current_character++);
+            return Token(TokenType::right_parenthesis_t, *current_character++);
         } else if (is_identifier(*current_character)) {
             auto token = get_while_matching(is_identifier);
             auto token_type = llvm::StringSwitch<TokenType>(token)
-                                  .Case("BEGIN", t_begin)
-                                  .Case("END", t_end)
-                                  .Case("LOOP", t_loop)
-                                  .Case("BREAK", t_break)
-                                  .Case("IFN", t_ifn)
-                                  .Case("IFP", t_ifp)
-                                  .Case("IFZ", t_ifz)
-                                  .Case("ELSE", t_else)
-                                  .Case("PRINT", t_print)
-                                  .Case("READ", t_read)
-                                  .Default(t_variable);
+                                  .Case("BEGIN", TokenType::begin_t)
+                                  .Case("END", TokenType::end_t)
+                                  .Case("LOOP", TokenType::loop_t)
+                                  .Case("BREAK", TokenType::break_t)
+                                  .Case("IFN", TokenType::ifn_t)
+                                  .Case("IFP", TokenType::ifp_t)
+                                  .Case("IFZ", TokenType::ifz_t)
+                                  .Case("ELSE", TokenType::else_t)
+                                  .Case("PRINT", TokenType::print_t)
+                                  .Case("READ", TokenType::read_t)
+                                  .Default(TokenType::variable_t);
             return Token(token_type, token);
         } else if (*current_character == '{') {
             current_character = std::next(std::find(current_character, characters_end, '}'));

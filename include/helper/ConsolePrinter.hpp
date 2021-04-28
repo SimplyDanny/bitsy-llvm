@@ -29,7 +29,11 @@ ConsolePrinter &ConsolePrinter::operator<<(const T output) {
     if (last_was_endl) {
         std::cout << std::string(2 * indent, ' ');
     }
-    std::cout << output;
+    if constexpr (std::is_enum_v<T>) {
+        std::cout << static_cast<std::underlying_type_t<T>>(output);
+    } else {
+        std::cout << output;
+    }
     last_was_endl = false;
     return *this;
 };

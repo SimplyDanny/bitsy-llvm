@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-enum IfStatementType : char { zero = 'Z', positive = 'P', negative = 'N' };
+enum class IfStatementType : char { zero = 'Z', positive = 'P', negative = 'N' };
 
 #define CLASS_OF_STATEMENT(kind)                      \
     static bool classof(const Statement *statement) { \

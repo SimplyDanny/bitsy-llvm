@@ -1,32 +1,32 @@
 #ifndef TOKENTYPE_HPP
 #define TOKENTYPE_HPP
 
-enum TokenType {
+enum class TokenType {
     // Blocks
-    t_begin,
-    t_end,
+    begin_t,
+    end_t,
 
     // Control flow
-    t_loop,
-    t_break,
-    t_ifn,
-    t_ifp,
-    t_ifz,
-    t_else,
+    loop_t,
+    break_t,
+    ifn_t,
+    ifp_t,
+    ifz_t,
+    else_t,
 
     // Identifiers
-    t_variable,
-    t_number,
+    variable_t,
+    number_t,
 
     // Operators
-    t_left_parenthesis,
-    t_right_parenthesis,
-    t_operator,
-    t_assignment,
+    left_parenthesis_t,
+    right_parenthesis_t,
+    operator_t,
+    assignment_t,
 
     // Built-ins
-    t_print,
-    t_read,
+    print_t,
+    read_t,
 };
 
 #endif
