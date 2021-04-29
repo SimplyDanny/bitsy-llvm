@@ -38,4 +38,4 @@ class TestCase:
 
 
 if __name__ == '__main__':
-    exit(not all(TestCase(spec).run() for spec in listdir(SPEC_PATH)))
+    exit(not all([TestCase(spec).run() for spec in listdir(SPEC_PATH)]))
