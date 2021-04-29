@@ -27,6 +27,7 @@ cl::opt<bool> compile{"c", cl::desc("Compile Bitsy file to an exectuable output 
 cl::opt<bool> quiet{"q", cl::desc("Do not execute the program automatically"), cl::cat(category)};
 cl::opt<bool> no_optimization{"no-opt", cl::desc("Do not run any optimization"), cl::cat(category)};
 cl::opt<bool> show_cfg{"show-cfg", cl::desc("Show CFG or create an image of it"), cl::cat(category)};
+cl::opt<bool> show_ast{"show-ast", cl::desc("Print the internally used AST"), cl::cat(category)};
 
 }} // namespace ::opt
 
@@ -64,6 +65,9 @@ int main(int argc, char *argv[]) {
         if (processor.show_cfg()) {
             return 4;
         }
+    }
+    if (opt::show_ast) {
+        ASTPrinter().visit(llvm::cast<Statement>(main_block.get()));
     }
     if (!opt::quiet) {
         return processor.execute();
