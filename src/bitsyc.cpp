@@ -69,8 +69,8 @@ int main(int argc, char *argv[]) {
     if (opt::show_ast) {
         ASTPrinter().visit(llvm::cast<Statement>(main_block.get()));
     }
-    if (!opt::quiet) {
-        return processor.execute();
+    if (opt::quiet || opt::show_cfg || opt::show_ast) {
+        return 0;
     }
-    return 0;
+    return processor.execute();
 }
