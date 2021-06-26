@@ -6,15 +6,16 @@
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
-#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/IR/PassManager.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/Passes/PassBuilder.h"
 #include "llvm/Support/GraphWriter.h"
 #include "llvm/Support/Program.h"
 #include "llvm/Support/TargetSelect.h"
-#include "llvm/Transforms/InstCombine/InstCombine.h"
-#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms//Scalar/SimplifyCFG.h"
+#include "llvm/Transforms//Utils/Mem2Reg.h"
 #include "llvm/Transforms/Scalar/GVN.h"
-#include "llvm/Transforms/Utils.h"
+#include "llvm/Transforms/Scalar/Reassociate.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
 #include <filesystem>
@@ -66,15 +67,18 @@ bool ModuleProcessor::verify() const {
 }
 
 void ModuleProcessor::optimize() {
-    llvm::legacy::FunctionPassManager manager{module.get()};
-    manager.add(llvm::createInstructionCombiningPass());
-    manager.add(llvm::createReassociatePass());
-    manager.add(llvm::createGVNPass());
-    manager.add(llvm::createCFGSimplificationPass());
-    manager.add(llvm::createPromoteMemoryToRegisterPass());
-    manager.doInitialization();
-    manager.run(*module->getFunction("main"));
-    manager.doFinalization();
+    llvm::FunctionPassManager pass_manager{};
+    pass_manager.addPass(llvm::ReassociatePass());
+    pass_manager.addPass(llvm::GVN());
+    pass_manager.addPass(llvm::SimplifyCFGPass());
+    // pass_manager.addPass(llvm::InstCombinePass()); TODO: Investigate why this pass leads to a segmentation fault.
+    pass_manager.addPass(llvm::PromotePass());
+
+    llvm::PassBuilder pass_builder;
+    llvm::FunctionAnalysisManager analysis_manager{};
+    pass_builder.registerFunctionAnalyses(analysis_manager);
+
+    pass_manager.run(*module->getFunction("main"), analysis_manager);
 }
 
 int ModuleProcessor::compile() const {

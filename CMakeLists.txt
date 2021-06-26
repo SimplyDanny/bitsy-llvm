@@ -23,6 +23,7 @@ llvm_map_components_to_libnames(
     Core
     MCJIT
     nativecodegen
+    Passes
 )
 
 add_executable(
