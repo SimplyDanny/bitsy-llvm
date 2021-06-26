@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
         }
     }
     if (opt::show_cfg) {
-        if (processor.show_cfg()) {
+        if (!processor.show_cfg()) {
             return 4;
         }
     }
