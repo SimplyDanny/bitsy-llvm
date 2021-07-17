@@ -12,8 +12,6 @@
 #include <string>
 #include <type_traits>
 
-using TokenMatcher = std::function<bool(char)>;
-
 template <class InputIterator>
 class Lexer : public std::iterator<std::input_iterator_tag, Token> {
 
@@ -37,6 +35,7 @@ class Lexer : public std::iterator<std::input_iterator_tag, Token> {
 
   private:
     std::optional<Token> next();
+    template <class TokenMatcher>
     std::string get_while_matching(const TokenMatcher &matcher);
 
     static bool is_operator(char c);
@@ -119,6 +118,7 @@ std::optional<Token> Lexer<InputIterator>::next() {
 }
 
 template <class InputIterator>
+template <class TokenMatcher>
 std::string Lexer<InputIterator>::get_while_matching(const TokenMatcher &matcher) {
     std::string value;
     do {
