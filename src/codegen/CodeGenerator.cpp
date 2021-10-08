@@ -122,9 +122,9 @@ llvm::Value *CodeGenerator::visit(const NumberExpression *number_expression) {
 
 llvm::Value *CodeGenerator::visit(const VariableExpression *variable_expression) {
     if (auto known_variable = known_variables[variable_expression->name]) {
-        return builder.CreateLoad(known_variable);
+        return builder.CreateLoad(builder.getInt32Ty(), known_variable);
     }
-    return builder.CreateLoad(allocate_variable(variable_expression->name));
+    return builder.CreateLoad(builder.getInt32Ty(), allocate_variable(variable_expression->name));
 }
 
 llvm::Value *CodeGenerator::visit(const BinaryOperationExpression *binary_operation_expression) {
