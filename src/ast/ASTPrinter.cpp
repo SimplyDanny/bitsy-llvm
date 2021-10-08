@@ -4,7 +4,7 @@
 
 void ASTPrinter::visit(const Program *program) {
     cout << "BEGIN" << endl;
-    cout << [&]() {
+    cout << [=]() {
         visit(program->block.get());
     };
     cout << "END" << endl;
@@ -20,12 +20,12 @@ void ASTPrinter::visit(const IfStatement *if_statement) {
     cout << "IF" << if_statement->type << " ";
     ASTVisitor::visit(if_statement->expression.get());
     cout << endl;
-    cout << [&]() {
+    cout << [=]() {
         visit(if_statement->then_block.get());
     };
     if (if_statement->else_block) {
         cout << "ELSE" << endl;
-        cout << [&]() {
+        cout << [=]() {
             visit(if_statement->else_block.get());
         };
     }
@@ -34,7 +34,7 @@ void ASTPrinter::visit(const IfStatement *if_statement) {
 
 void ASTPrinter::visit(const LoopStatement *loop_statement) {
     cout << "LOOP" << endl;
-    cout << [&]() {
+    cout << [=]() {
         visit(loop_statement->block.get());
     };
     cout << "END" << endl;
