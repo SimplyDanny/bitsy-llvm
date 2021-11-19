@@ -13,8 +13,16 @@
 #include <type_traits>
 
 template <class InputIterator>
-class Lexer : public std::iterator<std::input_iterator_tag, Token> {
+class Lexer {
 
+  public:
+    using iterator_category = std::input_iterator_tag;
+    using value_type = Token;
+    using difference_type = std::ptrdiff_t;
+    using pointer = Token *;
+    using reference = Token &;
+
+  private:
     static_assert(std::is_same<typename std::iterator_traits<InputIterator>::value_type, char>(),
                   "Expecting iterator over 'char' type.");
 
