@@ -167,11 +167,12 @@ llvm::Value *CodeGenerator::create_if_condition(const IfStatement *if_statement)
     auto condition = visit(if_statement->expression.get());
     auto null = llvm::ConstantInt::get(builder.getInt32Ty(), 0);
     switch (if_statement->type) {
-        case IfStatementType::positive:
+        using enum IfStatementType;
+        case positive:
             return builder.CreateICmp(llvm::CmpInst::ICMP_SLT, null, condition);
-        case IfStatementType::zero:
+        case zero:
             return builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, condition);
-        case IfStatementType::negative:
+        case negative:
             return builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, condition);
     }
 }

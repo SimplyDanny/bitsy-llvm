@@ -40,16 +40,17 @@ std::unique_ptr<Expression> Parser::parse_expression() {
 
 std::unique_ptr<Expression> Parser::parse_single_expression_component() {
     switch ((++token)->type) {
-        case TokenType::operator_t:
+        using enum TokenType;
+        case operator_t:
             if (token->value == "-" || token->value == "+") {
                 return std::make_unique<NumberExpression>(std::stoi(token->value + (++token)->value));
             }
             throw std::logic_error("Unknown unary operator.");
-        case TokenType::number_t:
+        case number_t:
             return std::make_unique<NumberExpression>(std::stoi(token->value));
-        case TokenType::variable_t:
+        case variable_t:
             return std::make_unique<VariableExpression>(token->value);
-        case TokenType::left_parenthesis_t:
+        case left_parenthesis_t:
             return parse_parenthesis_expression();
         default:
             throw std::logic_error("Unknown token type during expression parsing.");
@@ -109,28 +110,29 @@ std::unique_ptr<Expression> Parser::parse_binary_expression(int precedence,
 
 std::unique_ptr<Statement> Parser::parse_statement() {
     switch (token->type) {
-        case TokenType::ifn_t:
+        using enum TokenType;
+        case ifn_t:
             return parse_if_statement(IfStatementType::negative);
-        case TokenType::ifp_t:
+        case ifp_t:
             return parse_if_statement(IfStatementType::positive);
-        case TokenType::ifz_t:
+        case ifz_t:
             return parse_if_statement(IfStatementType::zero);
-        case TokenType::loop_t:
+        case loop_t:
             return std::make_unique<LoopStatement>(parse_block());
-        case TokenType::print_t:
+        case print_t:
             return std::make_unique<PrintStatement>(parse_expression());
-        case TokenType::read_t: {
-            if ((++token)->type != TokenType::variable_t) {
+        case read_t: {
+            if ((++token)->type != variable_t) {
                 throw std::logic_error("Expecting a variable as the argument of a 'READ' statement.");
             }
             auto variable_expression = std::make_unique<VariableExpression>(token->value);
             return std::make_unique<ReadStatement>(std::move(variable_expression));
         }
-        case TokenType::break_t:
+        case break_t:
             return std::make_unique<BreakStatement>();
-        case TokenType::variable_t: {
+        case variable_t: {
             auto assignee = std::make_unique<VariableExpression>(token->value);
-            if ((++token)->type != TokenType::assignment_t) {
+            if ((++token)->type != assignment_t) {
                 throw std::logic_error("Expecting an assignment operator '='.");
             }
             auto assignment = parse_expression();
