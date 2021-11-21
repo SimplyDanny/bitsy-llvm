@@ -15,7 +15,7 @@ message(STATUS "Using LLVMConfig.cmake in '${LLVM_DIR}'")
 
 configure_file(include/helper/ClangPath.hpp.in include/helper/ClangPath.hpp)
 
-include_directories(include ${PROJECT_BINARY_DIR}/include ${LLVM_INCLUDE_DIRS})
+include_directories(include ${PROJECT_BINARY_DIR}/include SYSTEM ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
 # Find the libraries that correspond to the LLVM components that we wish to use.
@@ -39,6 +39,8 @@ add_executable(
 )
 
 set_target_properties(bitsyc PROPERTIES VISIBILITY_INLINES_HIDDEN true)
+
+target_compile_options(bitsyc PRIVATE -Wall -Wextra -Wdeprecated -Wconversion -pedantic)
 
 if(NOT LLVM_ENABLE_RTTI)
     message(STATUS "Building without RTTI")

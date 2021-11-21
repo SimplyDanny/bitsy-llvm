@@ -112,12 +112,13 @@ void CodeGenerator::visit(const AssignmentStatement *assignment_statement) {
 }
 
 void CodeGenerator::visit(const BreakStatement *break_statement) {
+    (void)break_statement;
     builder.CreateBr(loop_continuation_hierarchy.top());
     had_break = true;
 }
 
 llvm::Value *CodeGenerator::visit(const NumberExpression *number_expression) {
-    return llvm::ConstantInt::get(builder.getInt32Ty(), number_expression->value);
+    return llvm::ConstantInt::getSigned(builder.getInt32Ty(), number_expression->value);
 }
 
 llvm::Value *CodeGenerator::visit(const VariableExpression *variable_expression) {
