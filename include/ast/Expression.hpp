@@ -30,9 +30,9 @@ struct Expression {
 };
 
 struct NumberExpression : public Expression {
-    int value;
+    std::int32_t value;
 
-    explicit NumberExpression(int value)
+    explicit NumberExpression(std::int32_t value)
       : Expression(number_expr)
       , value(value) {}
 

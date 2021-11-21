@@ -43,11 +43,11 @@ std::unique_ptr<Expression> Parser::parse_single_expression_component() {
         using enum TokenType;
         case operator_t:
             if (token->value == "-" || token->value == "+") {
-                return std::make_unique<NumberExpression>(std::stoi(token->value + (++token)->value));
+                return std::make_unique<NumberExpression>(std::stol(token->value + (++token)->value));
             }
             throw std::logic_error("Unknown unary operator.");
         case number_t:
-            return std::make_unique<NumberExpression>(std::stoi(token->value));
+            return std::make_unique<NumberExpression>(std::stol(token->value));
         case variable_t:
             return std::make_unique<VariableExpression>(token->value);
         case left_parenthesis_t:

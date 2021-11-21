@@ -115,5 +115,5 @@ int ModuleProcessor::execute() const {
     auto engine = llvm::EngineBuilder(std::move(engine_module)).create();
     auto result = engine->runFunction(main, {});
 
-    return result.IntVal.getSExtValue();
+    return static_cast<int>(result.IntVal.getSExtValue()); // Programs always return 0.
 }
