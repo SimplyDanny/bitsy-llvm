@@ -175,5 +175,7 @@ llvm::Value *CodeGenerator::create_if_condition(const IfStatement *if_statement)
             return builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, condition);
         case negative:
             return builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, condition);
+        default:
+            llvm_unreachable("Unknown if-statement type.");
     }
 }
