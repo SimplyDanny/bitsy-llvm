@@ -7,7 +7,6 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 
-#include <map>
 #include <stack>
 
 class CodeGenerator : public ASTVisitor<llvm::Value *> {
@@ -23,7 +22,7 @@ class CodeGenerator : public ASTVisitor<llvm::Value *> {
     llvm::Function *main_function;
     llvm::BasicBlock *main_block;
 
-    std::map<std::string, llvm::Value *> known_variables;
+    llvm::StringMap<llvm::Value *> known_variables;
     std::stack<llvm::BasicBlock *> loop_continuation_hierarchy;
 
   public:
