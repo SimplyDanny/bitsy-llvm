@@ -1,8 +1,6 @@
 #ifndef EXPRESSION_HPP
 #define EXPRESSION_HPP
 
-#include "llvm/Support/Casting.h"
-
 #include <memory>
 #include <string>
 

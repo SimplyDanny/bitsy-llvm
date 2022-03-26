@@ -2,7 +2,6 @@
 
 #include "llvm/IR/Function.h"
 #include "llvm/Support/Host.h"
-#include "llvm/Support/raw_ostream.h"
 
 #include <memory>
 

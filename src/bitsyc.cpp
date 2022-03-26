@@ -1,5 +1,4 @@
 #include "ast/ASTPrinter.hpp"
-#include "codegen/CodeGenerator.hpp"
 #include "codegen/ModuleBuilder.hpp"
 #include "execution/ModuleProcessor.hpp"
 #include "lexer/Lexer.hpp"

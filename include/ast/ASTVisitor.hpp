@@ -4,6 +4,8 @@
 #include "ast/Expression.hpp"
 #include "ast/Statement.hpp"
 
+#include "llvm/Support/Casting.h"
+
 #include <stdexcept>
 
 template <class ExpressionReturnType>
