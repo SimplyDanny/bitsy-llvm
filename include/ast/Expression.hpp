@@ -4,10 +4,8 @@
 #include <memory>
 #include <string>
 
-#define CLASS_OF_EXPRESSION(kind)                      \
-    static bool classof(const Expression *statement) { \
-        return statement->get_kind() == kind;          \
-    }
+#define CLASS_OF_EXPRESSION(kind) \
+    static bool classof(const Expression *statement) { return statement->get_kind() == kind; }
 
 struct Expression {
   protected:
