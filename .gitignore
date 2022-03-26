@@ -1,6 +1,5 @@
 *.out
 
 .cache
-.clangd
 build
 *.code-workspace
