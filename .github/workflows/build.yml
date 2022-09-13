@@ -4,32 +4,17 @@ on: [push]
 
 env:
   BUILD_TYPE: Release
+  LLVM_VERSION: 14
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout BitsyLLVM
       uses: actions/checkout@v2
       with:
         path: bitsy-llvm
-
-    - name: Cache LLVM and Clang
-      id: cache-llvm
-      uses: actions/cache@v2
-      with:
-        path: ${{runner.temp}}/llvm
-        key: llvm-cache
-
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "13.0.0"
-        force-version: true
-        ubuntu-version: 20.04
-        directory: ${{runner.temp}}/llvm
-        cached: ${{steps.cache-llvm.outputs.cache-hit}}
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/bitsy-llvm/build
@@ -40,9 +25,9 @@ jobs:
       run: >
         cmake ..
         -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-        -DCMAKE_C_COMPILER=${{runner.temp}}/llvm/bin/clang
-        -DCMAKE_CXX_COMPILER=${{runner.temp}}/llvm/bin/clang++
-        -DLLVM_DIR=${{runner.temp}}/llvm/lib/cmake/llvm/
+        -DCMAKE_C_COMPILER=clang-$LLVM_VERSION
+        -DCMAKE_CXX_COMPILER=clang++-$LLVM_VERSION
+        -DLLVM_DIR=/usr/lib/llvm-$LLVM_VERSION/cmake/llvm
 
     - name: Build
       working-directory: ${{github.workspace}}/bitsy-llvm/build

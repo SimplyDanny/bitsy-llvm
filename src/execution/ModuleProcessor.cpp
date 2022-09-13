@@ -68,10 +68,11 @@ bool ModuleProcessor::verify() const {
 
 void ModuleProcessor::optimize() {
     llvm::FunctionPassManager pass_manager{};
+    // TODO: Investigate why the commented passes lead to segmentation faults.
     pass_manager.addPass(llvm::ReassociatePass());
-    pass_manager.addPass(llvm::GVN());
+    // pass_manager.addPass(llvm::GVNPass());
     pass_manager.addPass(llvm::SimplifyCFGPass());
-    // pass_manager.addPass(llvm::InstCombinePass()); TODO: Investigate why this pass leads to a segmentation fault.
+    // pass_manager.addPass(llvm::InstCombinePass());
     pass_manager.addPass(llvm::PromotePass());
 
     llvm::PassBuilder pass_builder;
