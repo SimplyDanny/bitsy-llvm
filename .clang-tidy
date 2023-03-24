@@ -5,4 +5,9 @@ Checks: >-
     performance-*,
     portability-*,
     readability-*,-readability-qualified-auto,-readability-magic-numbers
-IgnoredVariableNames: "^c$"
+
+CheckOptions:
+  - key: readability-identifier-naming.ParameterIgnoredRegexp
+    value: ^c$
+  - key: readability-identifier-length.IgnoredParameterNames
+    value: ^c$

@@ -42,11 +42,11 @@ std::unique_ptr<Expression> Parser::parse_single_expression_component() {
     switch ((++token)->type) {
         using enum TokenType;
         case operator_t: {
-            auto op = token++->value;
-            if (op == "-" || op == "+") {
-                return std::make_unique<NumberExpression>(std::stol(op + token->value));
+            auto symbol = token++->value;
+            if (symbol == "-" || symbol == "+") {
+                return std::make_unique<NumberExpression>(std::stol(symbol + token->value));
             }
-            throw std::logic_error("Unknown unary operator '" + op + "'.");
+            throw std::logic_error("Unknown unary operator '" + symbol + "'.");
         }
         case number_t:
             return std::make_unique<NumberExpression>(std::stol(token->value));
