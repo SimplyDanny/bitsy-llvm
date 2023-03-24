@@ -4,6 +4,7 @@
 #include "llvm/Support/Host.h"
 
 #include <memory>
+#include <unordered_map>
 
 CodeGenerator::CodeGenerator(llvm::Module &module)
   : module(module)
@@ -164,17 +165,13 @@ llvm::Value *CodeGenerator::allocate_variable(const std::string &name) {
 }
 
 llvm::Value *CodeGenerator::create_if_condition(const IfStatement *if_statement) {
+    using enum IfStatementType;
+    using enum llvm::CmpInst::Predicate;
+    const std::unordered_map type_predicate_mapping = {std::pair{positive, ICMP_SLT},
+                                                       std::pair{zero, ICMP_EQ},
+                                                       std::pair{negative, ICMP_SGT}};
     auto condition = visit(if_statement->expression.get());
     auto null = llvm::ConstantInt::get(builder.getInt32Ty(), 0);
-    switch (if_statement->type) {
-        using enum IfStatementType;
-        case positive:
-            return builder.CreateICmp(llvm::CmpInst::ICMP_SLT, null, condition);
-        case zero:
-            return builder.CreateICmp(llvm::CmpInst::ICMP_EQ, null, condition);
-        case negative:
-            return builder.CreateICmp(llvm::CmpInst::ICMP_SGT, null, condition);
-        default:
-            llvm_unreachable("Unknown if-statement type.");
-    }
+    auto predicate = type_predicate_mapping.at(if_statement->type);
+    return builder.CreateICmp(predicate, null, condition);
 }
