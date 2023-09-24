@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout BitsyLLVM
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         path: bitsy-llvm
 
