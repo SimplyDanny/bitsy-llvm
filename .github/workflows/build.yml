@@ -35,7 +35,7 @@ jobs:
       run: cmake --build . --config $BUILD_TYPE
 
     - name: Checkout bitsyspec
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository:  apbendi/bitsyspec
         path: bitsyspec
