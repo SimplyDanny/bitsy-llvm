@@ -10,7 +10,10 @@
 #include <string>
 #include <type_traits>
 
-template <class InputIterator>
+template <class I>
+concept CharIterator = std::same_as<typename std::iterator_traits<I>::value_type, char>;
+
+template <CharIterator InputIterator>
 class Lexer {
 
   public:
@@ -21,9 +24,6 @@ class Lexer {
     using reference = Token &;
 
   private:
-    static_assert(std::is_same<typename std::iterator_traits<InputIterator>::value_type, char>(),
-                  "Expecting iterator over 'char' type.");
-
     InputIterator current_character;
     InputIterator characters_end;
 
@@ -42,13 +42,14 @@ class Lexer {
   private:
     std::optional<Token> next();
     template <class TokenMatcher>
+        requires std::is_invocable_r_v<bool, TokenMatcher, char>
     std::string get_while_matching(const TokenMatcher &matcher);
 
     static bool is_operator(char c);
     static bool is_identifier(char c);
 };
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 Lexer<InputIterator>::Lexer(InputIterator begin, InputIterator end)
   : current_character(begin)
   , characters_end(end) {
@@ -57,34 +58,34 @@ Lexer<InputIterator>::Lexer(InputIterator begin, InputIterator end)
     }
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 Token Lexer<InputIterator>::operator*() const {
     return *current_token;
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 Token &Lexer<InputIterator>::operator++() {
     return *(current_token = next());
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 Token Lexer<InputIterator>::operator++(int) {
     auto tmp_token = std::move(current_token);
     ++(*this);
     return *tmp_token;
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 bool Lexer<InputIterator>::operator==(const Lexer &other) const {
     return current_token.has_value() == other.current_token.has_value();
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 bool Lexer<InputIterator>::operator!=(const Lexer &other) const {
     return !(*this == other);
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 std::optional<Token> Lexer<InputIterator>::next() {
     while (current_character != characters_end) {
         if (isspace(*current_character) != 0) {
@@ -123,8 +124,9 @@ std::optional<Token> Lexer<InputIterator>::next() {
     return {};
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 template <class TokenMatcher>
+    requires std::is_invocable_r_v<bool, TokenMatcher, char>
 std::string Lexer<InputIterator>::get_while_matching(const TokenMatcher &matcher) {
     std::string value;
     do {
@@ -133,12 +135,12 @@ std::string Lexer<InputIterator>::get_while_matching(const TokenMatcher &matcher
     return value;
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 bool Lexer<InputIterator>::is_operator(const char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
 }
 
-template <class InputIterator>
+template <CharIterator InputIterator>
 bool Lexer<InputIterator>::is_identifier(const char c) {
     return (isalnum(c) != 0) || c == '_';
 }

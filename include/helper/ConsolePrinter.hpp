@@ -16,7 +16,8 @@ class ConsolePrinter {
     bool last_was_endl = true;
 
   public:
-    template <class T, std::enable_if_t<!ConsolePrinter::is_printer<T>, bool> = true>
+    template <class T>
+        requires(!ConsolePrinter::is_printer<T>)
     ConsolePrinter &operator<<(const T &output);
     ConsolePrinter &operator<<(const NestedPrinter &nested_printer);
     ConsolePrinter &operator<<(const EndlPrinter &endl_printer);
@@ -24,7 +25,8 @@ class ConsolePrinter {
     friend void endl(ConsolePrinter &printer);
 };
 
-template <class T, std::enable_if_t<!ConsolePrinter::is_printer<T>, bool>>
+template <class T>
+    requires(!ConsolePrinter::is_printer<T>)
 ConsolePrinter &ConsolePrinter::operator<<(const T &output) {
     if (last_was_endl) {
         std::cout << std::string(2 * indent, ' ');
