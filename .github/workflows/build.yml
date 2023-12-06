@@ -4,7 +4,7 @@ on: [push]
 
 env:
   BUILD_TYPE: Release
-  LLVM_VERSION: 14
+  LLVM_VERSION: 15
 
 jobs:
   build:
