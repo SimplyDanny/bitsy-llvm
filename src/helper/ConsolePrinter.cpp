@@ -13,7 +13,7 @@ ConsolePrinter &ConsolePrinter::operator<<(const EndlPrinter &endl_printer) {
 }
 
 void endl(ConsolePrinter &printer) {
-    std::cout << std::endl;
+    std::cout << '\n';
     printer.last_was_endl = true;
 }
 

@@ -37,23 +37,23 @@ bool ModuleProcessor::show_cfg() const {
 
     auto dot_program = llvm::sys::findProgramByName("dot");
     if (!dot_program) {
-        std::cerr << "The 'dot' program cannot be found in your PATH." << std::endl;
+        std::cerr << "The 'dot' program cannot be found in your PATH." << '\n';
         return false;
     }
     auto png_file = std::filesystem::current_path() / (output_name + ".png");
     llvm::ArrayRef<llvm::StringRef> dot_arguments{*dot_program, "-Tpng", "-o", png_file.c_str(), dot_file.c_str()};
     if (llvm::sys::ExecuteAndWait(*dot_program, dot_arguments) != 0) {
-        std::cerr << "Error converting DOT file to PNG file." << std::endl;
+        std::cerr << "Error converting DOT file to PNG file." << '\n';
         return false;
     }
-    std::cout << "PNG file " << png_file << " generated." << std::endl;
+    std::cout << "PNG file " << png_file << " generated." << '\n';
 
 #if defined(__APPLE__)
-    std::cout << "Opening it ..." << std::endl;
+    std::cout << "Opening it ..." << '\n';
     auto open_program = llvm::sys::findProgramByName("open");
     llvm::ArrayRef<llvm::StringRef> open_arguments{*open_program, png_file.c_str()};
     if (llvm::sys::ExecuteAndWait(*open_program, open_arguments) != 0) {
-        std::cerr << "Error opening PNG file." << std::endl;
+        std::cerr << "Error opening PNG file." << '\n';
         return false;
     }
 #endif
@@ -87,7 +87,7 @@ int ModuleProcessor::compile() const {
     std::error_code error_code;
     llvm::raw_fd_ostream file_stream{ll_file.string(), error_code};
     if (error_code.value() != 0) {
-        std::cerr << "Error creating temporary file for IR output." << std::endl;
+        std::cerr << "Error creating temporary file for IR output." << '\n';
         return error_code.value();
     }
     module->print(file_stream, nullptr);

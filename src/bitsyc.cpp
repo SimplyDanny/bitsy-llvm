@@ -36,7 +36,8 @@ int main(int argc, char *argv[]) {
 
     std::ifstream file_stream{opt::input_name};
     if (!file_stream.good()) {
-        std::cerr << "Cannot open the input file." << std::endl;
+        std::cerr << "Cannot open the input file."
+                  << "\n";
         return 1;
     }
 
