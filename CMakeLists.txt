@@ -21,7 +21,6 @@ add_definitions(${LLVM_DEFINITIONS})
 # Find the libraries that correspond to the LLVM components that we wish to use.
 llvm_map_components_to_libnames(
     BITSYC_LLVM_LIBRARIES
-    Core
     MCJIT
     nativecodegen
     Passes
