@@ -1,6 +1,7 @@
 #ifndef EXPRESSION_HPP
 #define EXPRESSION_HPP
 
+#include <cstdint>
 #include <memory>
 #include <string>
 

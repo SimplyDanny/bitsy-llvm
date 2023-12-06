@@ -5,9 +5,7 @@
 
 #include "llvm/ADT/StringSwitch.h"
 
-#include <functional>
 #include <iterator>
-#include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>

@@ -2,7 +2,6 @@
 
 #include "llvm/ADT/StringSwitch.h"
 
-#include <iostream>
 #include <stdexcept>
 
 Parser::Parser(std::vector<Token> &tokens)
